@@ -1,0 +1,23 @@
+The 5 sigma discovery and 95% CL expected excluded cross sections at HL-LHC, 
+with a pp collision energy of sqrt{s}=14 TeV and an integrated luminosity of 3 ab^-1,
+for a dijet resonance mass (M) centerred on a dijet mass (m) signal window between 
+0.836 < m/M <1.164, and for jet cuts |delta-eta|<1.1 and |eta|<2.5.  From a lowest order calculation of the pp->dijet QCD cross section with CTEQ6L1 pdfs and mu=p_t/2. See http://arxiv.org/abs/2202.03389
+
+   Resonance     5sigma discovery  95% CL Exclusion
+     Mass        Xsec X BR X Acc   Xsec X BR X Acc
+     (GeV)            (pb)            (pb)
+   700.00000      0.22787690      7.47427568E-02
+   1400.0000      4.24541831E-02  1.39241051E-02
+   2100.0000      1.40560484E-02  4.60951682E-03
+   2800.0000      5.95679227E-03  1.95296074E-03
+   3500.0000      2.88177514E-03  9.44354630E-04
+   4200.0000      1.50744349E-03  4.93573141E-04
+   4900.0000      8.26759904E-04  2.70307588E-04
+   5600.0000      4.66278958E-04  1.52067500E-04
+   6300.0000      2.66940478E-04  8.66804330E-05
+   7000.0000      1.53815825E-04  4.95684399E-05
+   7700.0000      8.88034774E-05  2.82317196E-05
+   8400.0000      5.13941231E-05  1.59382998E-05
+   9100.0000      3.00844749E-05  8.90535102E-06
+   9800.0000      1.82748117E-05  4.94923734E-06
+   10500.000      1.21542234E-05  2.79045730E-06

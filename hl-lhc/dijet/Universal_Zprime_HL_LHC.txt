@@ -1,0 +1,21 @@
+The cross section times branching ratio times acceptance for a leptophobic Z' decaying to dijets with mass (M) and universal coupling g_q' = 0.25 to 6 flavors of quarks. At HL-LHC with a pp collision energy of sqrt{s}=14 TeV, from a lowest order calculation using CTEQ6L1 pdfs and mu=M. Branching ratio to dijets of 5/6 includes only u,d,s,c and b quarks. Acceptance for the jet cuts |delta-eta|<1.5 and |eta|<2.5 is included (~0.41), along with the acceptance for a dijet mass (m) signal window between 0.836 < m/M <1.164 (~0.85). See http://arxiv.org/abs/2202.03389 for overall methodology and https://arxiv.org/abs/1603.04156 for model width, where we assume the dark matter mass is greater than half the mediator mass, 
+so the full width is Gamma = (3/2pi) (g_q')^2 M.
+
+    Resonance    Cross Section 
+      Mass       X BR X ACC
+      (GeV)        (pb)            
+       700.0   0.2436E+02
+      1400.0   0.1471E+01
+      2100.0   0.2078E+00
+      2800.0   0.4035E-01
+      3500.0   0.9050E-02
+      4200.0   0.2173E-02
+      4900.0   0.5343E-03
+      5600.0   0.1304E-03
+      6300.0   0.3078E-04
+      7000.0   0.6848E-05
+      7700.0   0.1397E-05
+      8400.0   0.2538E-06
+      9100.0   0.4013E-07
+      9800.0   0.5494E-08
+     10500.0   0.6646E-09
