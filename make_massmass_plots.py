@@ -96,9 +96,6 @@ for collider in ["hl-lhc","fcc-hh"] :
     dijet_depth = dijet_exclusiondepths_axial[coupling]
     dijet_contours_axial[coupling] = getContours(target_scan_A2.mmed, target_scan_A2.mdm, dijet_depth)
 
-    # TODO FIXME
-    exit(1)
-
   # Now let's do some vector scans.
   # Recall we only want to convert mono-x limits between models once, since it's slow.
   # So we'll go to V1 and then get other vector models from there.

@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 
-# Object for plotting
-fig,ax=plt.subplots()
-
 def get_aspect_ratio(ax) :
   ratio = 1.0
   xleft, xright = ax.get_xlim()
@@ -13,15 +10,13 @@ def get_aspect_ratio(ax) :
   return abs((xright-xleft)/(ybottom-ytop))*ratio
 
 def getContours(xvals, yvals, zvals) :
-  #plt.figure(1).clf()
-  #fig,ax=plt.subplots(1,1)
+  fig,ax=plt.subplots()
   excontour = ax.tricontour(xvals, yvals, zvals, levels=[1])
   contour_list = []
   for path in excontour.collections[0].get_paths():
     this_contour = [path.vertices[:,0],path.vertices[:,1]]
     contour_list.append(this_contour)
-  plt.show()
-  #plt.cla()
+  plt.close(fig)
   return contour_list
 
 def drawContourPlot(grid_list, addPoints = False, this_tag = "default", plot_path = "plots", addText = "") :
@@ -31,8 +26,7 @@ def drawContourPlot(grid_list, addPoints = False, this_tag = "default", plot_pat
     os.makedirs(plot_path)
 
   # Object for plotting
-  #fig,ax=plt.subplots(1,1)
-  plt.cla()
+  fig,ax=plt.subplots(1,1)
 
   levels = range(26)  # Levels must be increasing.
   ax.set_xlim(0, 7500)
@@ -50,10 +44,7 @@ def drawContourPlot(grid_list, addPoints = False, this_tag = "default", plot_pat
 
   contour_list = []
   for grid in grid_list :
-    print("Doing grid", grid)
     cp = ax.tricontourf(grid[0], grid[1], grid[2], levels=levels, cmap='Blues_r')
-
-    #plt.show()
 
     # Want points under contour, if adding them.
     if addPoints :
@@ -76,11 +67,11 @@ def drawContourPlot(grid_list, addPoints = False, this_tag = "default", plot_pat
         this_contour = [path.vertices[:,0],path.vertices[:,1]]
         contour_list.append(this_contour)
 
-  #fig.colorbar(cp)
+  fig.colorbar(cp)
 
   plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
   plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
 
-  plt.cla()
+  plt.close(fig)
 
   return contour_list
