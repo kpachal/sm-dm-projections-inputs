@@ -154,7 +154,7 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
     # Object for plotting
     fig,ax=plt.subplots(1,1)
 
-    ax.set_xlim(0, 7500)
+    ax.set_xlim(0, 6000)
     ax.set_ylim(0, 1200)
     plt.rc('font',size=16)
     ratio = get_aspect_ratio(ax)
