@@ -48,4 +48,4 @@ ax.tricontour(xvals, yvals, zvals,levels=[1],colors=['w'],linewidths=[2])
 plt.savefig('monojet_hl-lhc_validation.pdf',bbox_inches='tight')
 
 # And finally save a new output file
-np.savez('hl-lhc-monojet.npz',xvals_np,yvals_np,zvals_np)
+np.savez('hl-lhc-monojet.npz',xvals=xvals_np,yvals=yvals_np,zvals=zvals_np)
