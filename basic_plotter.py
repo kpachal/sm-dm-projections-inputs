@@ -4,11 +4,14 @@ import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import numpy as np
 
-from shapely.geometry import Polygon
-from shapely.ops import cascaded_union
+from shapely.geometry import Polygon as shapely_pol
+from shapely.ops import unary_union
 from shapely import validation
 from matplotlib.path import Path
 from matplotlib.patches import Polygon
+from matplotlib.colors import ColorConverter
+
+import colorsys
 
 def get_aspect_ratio(ax) :
   ratio = 1.0
@@ -16,15 +19,12 @@ def get_aspect_ratio(ax) :
   ybottom, ytop = ax.get_ylim()
   return abs((xright-xleft)/(ybottom-ytop))*ratio
 
-# def getContours(xvals, yvals, zvals) :
-#   fig,ax=plt.subplots()
-#   excontour = ax.tricontour(xvals, yvals, zvals, levels=[1])
-#   contour_list = []
-#   for path in excontour.collections[0].get_paths():
-#     this_contour = [path.vertices[:,0],path.vertices[:,1]]
-#     contour_list.append(this_contour)
-#   plt.close(fig)
-#   return contour_list
+def scale_lightness(matplotlib_col, scale_l):
+    rgb = ColorConverter.to_rgb(matplotlib_col)
+    # convert rgb to hls
+    h, l, s = colorsys.rgb_to_hls(*rgb)
+    # manipulate h, l, s values and return as rgb
+    return colorsys.hls_to_rgb(h, min(1, l * scale_l), s = s)
 
 def get_contours(xvals, yvals, zvals) :
 
@@ -53,7 +53,7 @@ def get_contours(xvals, yvals, zvals) :
 
         # Now create and save polygons!
         for sub_segment in vertex_segs :
-          new_shape = Polygon(sub_segment)
+          new_shape = shapely_pol(sub_segment)
 
           # Check validity, fail if not valid
           if not new_shape.is_valid :
@@ -78,11 +78,11 @@ def merge_exclusions(contour_list) :
     contour_list = [item for sublist in contour_list for item in sublist]
 
     # Merge
-    merged = cascaded_union(contour_list)
+    merged = unary_union(contour_list)
 
     # Split multipolygon back into list of polygons, if needed
     if merged.geom_type == 'MultiPolygon':
-      poly_list = [poly for poly in merged]
+      poly_list = [poly for poly in merged.geoms]
     else :
       poly_list = [merged]
 
@@ -145,7 +145,7 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
 
   return contour_list
 
-def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "") :
+def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -164,13 +164,30 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
     ax.set_ylabel("m$_{\chi}$ [GeV]")   
 
     if addText :
-        plt.figtext(0.23,0.77,addText,size=14)
+        if addText.count('\n') == 1 :
+            plt.figtext(0.23,0.77,addText,size=14)
+        elif addText.count('\n') == 2 :
+            plt.figtext(0.23,0.72,addText,size=14)
+        else : plt.figtext(0.23,0.82,addText,size=14)
 
     # Need 3 cute colours
-    colours = ['cornflowerblue','turquoise','mediumorchid']    
-    for contour_group,label_line,col in zip(contour_groups,legend_lines,colours) :
-        for contour in contour_group :
-            patch = Polygon(list(contour.exterior.coords), facecolor=col, edgecolor=col, alpha=0.5, zorder=2, label=label_line)
+    if is_scaling :
+        ncols = len(contour_groups)
+        fill_colours = [scale_lightness('cornflowerblue',0.5+i*1.0/ncols) for i in range(ncols)]
+        line_colours = fill_colours
+        line_width = 1
+    else :
+        colours_raw = ['cornflowerblue','turquoise','mediumorchid']
+        fillOpacity = 0.5
+        fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
+        line_colours = colours_raw
+        line_width = 2
+    for contour_group,label_line,face_col,line_col in zip(contour_groups,legend_lines,fill_colours,line_colours) :
+        for index, contour in enumerate(contour_group) :
+            if index == 0 :
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) #alpha=fillOpacity, 
+            else :
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width) # alpha=fillOpacity,
             ax.add_patch(patch)
     ax.legend(fontsize=14)
 

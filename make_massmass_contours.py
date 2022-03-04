@@ -14,7 +14,7 @@ input_path = "/Users/katherinepachal/Code/sm-dm-projections-inputs/"
 plot_path = "plots/validation"
 
 # Couplings to test: you'll get a grid of all combinations
-test_gq = [0.25,0.15,0.1,0.01]
+test_gq = [0.25,0.15,0.1,0.05,0.01]
 test_gdm = 1.0
 test_gl = [0.1,0.05,0.01,0.0]
 
@@ -198,22 +198,22 @@ for collider in ["hl-lhc","fcc-hh"] :
     drawContourPlotRough(grid_list_vector, addPoints = False, this_tag = "vector_gq{0}_gdm{1}_gl{2}".format(coupling[0],coupling[1],coupling[2]),plot_path = plot_path)
 
   # Save output in a clean way so that paper plot making script can be separate without re-running
-  with open("vector_exclusion_depths.pkl", "wb") as outfile_vec_depths :
+  with open("vector_exclusion_depths_{0}.pkl".format(collider), "wb") as outfile_vec_depths :
     out_dict = {"dijet" : dijet_exclusiondepths_vector,
                 "monojet" : monojet_exclusiondepths_vector,
                 "dilepton" : dilepton_exclusiondepths_vector}
     pickle.dump(out_dict, outfile_vec_depths)
-  with open("axial_exclusion_depths.pkl", "wb") as outfile_axial_depths :
+  with open("axial_exclusion_depths_{0}.pkl".format(collider), "wb") as outfile_axial_depths :
     out_dict = {"dijet" : dijet_exclusiondepths_axial,
                 "monojet" : monojet_exclusiondepths_axial,
                 "dilepton" : dilepton_exclusiondepths_axial}
     pickle.dump(out_dict, outfile_axial_depths)    
-  with open("vector_exclusion_contours.pkl", "wb") as poly_file:
+  with open("vector_exclusion_contours.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_vector,
                 "monojet" : monojet_contours_vector,
                 "dilepton" : dilepton_contours_vector}
     pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)    
-  with open("axial_exclusion_contours.pkl", "wb") as poly_file:
+  with open("axial_exclusion_contours.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_axial,
                 "monojet" : monojet_contours_axial,
                 "dilepton" : dilepton_contours_axial}
