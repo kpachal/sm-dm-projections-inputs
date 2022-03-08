@@ -88,7 +88,7 @@ def merge_exclusions(contour_list) :
 
     return poly_list 
 
-def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plot_path = "plots", addText = "") :
+def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plot_path = "plots", addText = "", xhigh=None, yhigh=None) :
 
   # Check output
   if not os.path.exists(plot_path) :
@@ -98,8 +98,10 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
   fig,ax=plt.subplots(1,1)
 
   levels = range(26)  # Levels must be increasing.
-  ax.set_xlim(0, 7500)
-  ax.set_ylim(0, 1200)
+  usexhigh = xhigh if xhigh else 7500
+  useyhigh = yhigh if yhigh else 1200
+  ax.set_xlim(0, usexhigh)
+  ax.set_ylim(0, useyhigh)
   plt.rc('font',size=17)
   ratio = get_aspect_ratio(ax)
   ax.set_aspect(ratio)
