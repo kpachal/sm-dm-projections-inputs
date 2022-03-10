@@ -71,7 +71,7 @@ def merge_exclusions(contour_list) :
 
     # If there's only one, do nothing.
     if len(contour_list) < 2 :
-      return contour_list
+      return contour_list[0]
 
     # No longer matters which input each contour is from:
     # flatten the input to a simple list of polygons
@@ -81,6 +81,7 @@ def merge_exclusions(contour_list) :
     merged = unary_union(contour_list)
 
     # Split multipolygon back into list of polygons, if needed
+    poly_list = []
     if merged.geom_type == 'MultiPolygon':
       poly_list = [poly for poly in merged.geoms]
     else :
@@ -140,14 +141,14 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
 
   fig.colorbar(cp)
 
-  plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
+  #plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
   plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
 
   plt.close(fig)
 
   return contour_list
 
-def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False) :
+def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False, xhigh=None, yhigh=None) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -156,8 +157,10 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
     # Object for plotting
     fig,ax=plt.subplots(1,1)
 
-    ax.set_xlim(0, 6000)
-    ax.set_ylim(0, 1200)
+    usexhigh = xhigh if xhigh else 7500
+    useyhigh = yhigh if yhigh else 1200
+    ax.set_xlim(0, usexhigh)
+    ax.set_ylim(0, useyhigh)
     plt.rc('font',size=16)
     ratio = get_aspect_ratio(ax)
     ax.set_aspect(ratio)
@@ -193,7 +196,7 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
             ax.add_patch(patch)
     ax.legend(fontsize=14)
 
-    plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
+    #plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
     plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
 
     plt.close(fig)    

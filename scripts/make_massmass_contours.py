@@ -241,12 +241,12 @@ for collider in ["fcc-hh"] : # ["hl-lhc","fcc-hh"] : # hl-lhc done already.
                 "monojet" : monojet_exclusiondepths_axial,
                 "dilepton" : dilepton_exclusiondepths_axial}
     pickle.dump(out_dict, outfile_axial_depths)    
-  with open("vector_exclusion_contours.pkl".format(collider), "wb") as poly_file:
+  with open("vector_exclusion_contours_{0}.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_vector,
                 "monojet" : monojet_contours_vector,
                 "dilepton" : dilepton_contours_vector}
     pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)    
-  with open("axial_exclusion_contours.pkl".format(collider), "wb") as poly_file:
+  with open("axial_exclusion_contours_{0}.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_axial,
                 "monojet" : monojet_contours_axial,
                 "dilepton" : dilepton_contours_axial}
