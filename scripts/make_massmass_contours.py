@@ -31,7 +31,7 @@ def clean_grid(xvals, yvals, zvals) :
   return xclean, yclean, zclean
 
 # Now process everything
-for collider in ["fcc-hh"] : # ["hl-lhc","fcc-hh"] : # hl-lhc done already.
+for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
 
   print(collider)
 

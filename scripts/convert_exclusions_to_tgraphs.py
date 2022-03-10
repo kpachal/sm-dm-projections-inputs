@@ -5,7 +5,7 @@ test_gq = [0.25,0.15,0.1,0.05,0.01]
 test_gl = [0.1,0.05,0.01,0.0]
 
 # Load pickle files with polygons
-for collider in ['hl-lhc'] : # 'fcc-hh'
+for collider in ['hl-lhc', 'fcc-hh'] :
     for model in ['vector','axial'] :
         with open('{0}_exclusion_contours_{1}.pkl'.format(model,collider), "rb") as poly_file:
             loaded_polygons = pickle.load(poly_file)
