@@ -201,7 +201,7 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
 
     plt.close(fig)    
 
-def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",ylabel="\sigma",is_scaling=False, xhigh=None, ylow=None,yhigh=None) :
+def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",ylabel="\sigma",is_scaling=False, transluscent=False, xhigh=None, ylow=None,yhigh=None) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -234,7 +234,11 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
     if is_scaling :
         ncols = len(contour_groups)
         fill_colours = [scale_lightness('cornflowerblue',0.5+i*1.0/ncols) for i in range(ncols)]
-        line_colours = fill_colours
+        if transluscent :
+          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
+          line_colours = ['black' for i in fill_colours]
+        else :
+          line_colours = fill_colours          
         line_width = 1
     else :
         colours_raw = ['cornflowerblue','turquoise','mediumorchid']
@@ -246,9 +250,9 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
         for index, contour in enumerate(contour_group) :
             if len(list(contour.exterior.coords)) == 0 : continue
             if index == 0 :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor='black', zorder=2, label=label_line,linewidth=line_width) #line_col
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) 
             else :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor='black', zorder=2, label="_",linewidth=line_width) #line_col
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width)
             ax.add_patch(patch)
     ax.legend(fontsize=14)
 
