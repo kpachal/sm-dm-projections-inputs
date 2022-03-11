@@ -53,7 +53,6 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                         # e.g. no coupling to leptons, skip:
                         if (gq, 1.0, gl) not in loaded_polygons[signature].keys() :
                             continue
-                        print("Starting coupling",gq,1.0,gl)
                         exclusions = loaded_polygons[signature][(gq, 1.0, gl)]
                         inner_contours = []
                         for contour in exclusions :
@@ -81,7 +80,6 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                         exclusions_dd[signature][(gq, 1.0, gl)] = contours_list
                     # First set of plots: 3 contours, one plot for every coupling combo
                     label_line =  "{0}\n{7}, g$_{5}$={2}\ng$_{4}$={1}, g$_{6}$={3}".format(("Axial-vector" if 'axial' in model else "Vector"),gq,1.0,gl,"q","\chi","l",collider.upper())
-                    print(contours_list)
                     drawDDPlot(contours_list, legend_lines, this_tag = model+"_gq{0}_gdm1.0_gl{1}".format(gq, gl), plot_path = "plots/directdetection/"+collider, addText=label_line, xhigh=2000, yhigh=1e-37)
                     full_polygons = merge_exclusions(contours_list)
                     contours_list_couplingscan.append(full_polygons)
@@ -89,4 +87,21 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                 # Second set of plots: merge all contours; fix gq and vary gl.
                 # Note this is not meaningful where we don't have dilepton projections - skip then.
                 label_line = "{0}, {5}\ng$_{3}$={1}, g$_{4}$={2}".format(("Axial-vector" if 'axial' in model else "Vector"),gq,1.0,"q","\chi",collider.upper())
-                drawDDPlot(contours_list_couplingscan,legend_lines_couplingscan, this_tag = model+"_gq{0}_gdm1.0".format(gq), plot_path = "plots/massmass/"+collider, addText = label_line,is_scaling=True, xhigh=2000, yhigh=1e-37)                        
+                drawDDPlot(contours_list_couplingscan,legend_lines_couplingscan, this_tag = model+"_gq{0}_gdm1.0".format(gq), plot_path = "plots/directdetection/"+collider, addText = label_line,is_scaling=True, xhigh=2000, yhigh=1e-37)
+            # Need second set of plots with gl fixed instead:
+            for gl in test_gl :
+                contours_list_couplingscan = []
+                legend_lines_couplingscan = []
+                for gq in test_gq :
+                    contours_list = []
+                    for signature in ['dijet','monojet','dilepton'] :
+                        # e.g. no coupling to leptons, skip:
+                        if (gq, 1.0, gl) not in loaded_polygons[signature].keys() :
+                            continue
+                        exclusions = exclusions_dd[signature][(gq, 1.0, gl)]
+                        contours_list+=exclusions
+                    full_polygons = merge_exclusions(contours_list)
+                    contours_list_couplingscan.append(full_polygons)
+                    legend_lines_couplingscan.append("g$_{0}$={1}".format("q",gq))
+                label_line = "{0}, {5}\ng$_{3}$={1}, g$_{4}$={2}".format(("Axial-vector" if 'axial' in model else "Vector"),1.0,gl,"\chi","l",collider.upper())
+                drawDDPlot(contours_list_couplingscan,legend_lines_couplingscan, this_tag = model+"_gl{0}_gdm1.0".format(gl), plot_path = "plots/directdetection/"+collider, addText = label_line,is_scaling=True, xhigh=2000, yhigh=1e-37)

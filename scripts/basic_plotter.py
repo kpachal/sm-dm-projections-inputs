@@ -225,10 +225,10 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
 
     if addText :
         if addText.count('\n') == 1 :
-            plt.figtext(0.23,0.77,addText,size=14)
+            plt.figtext(0.16,0.15,addText,size=14)
         elif addText.count('\n') == 2 :
-            plt.figtext(0.23,0.72,addText,size=14)
-        else : plt.figtext(0.23,0.82,addText,size=14)
+            plt.figtext(0.16,0.19,addText,size=14)
+        else : plt.figtext(0.16,0.23,addText,size=14)
 
     # Need 3 cute colours
     if is_scaling :
@@ -246,9 +246,9 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
         for index, contour in enumerate(contour_group) :
             if len(list(contour.exterior.coords)) == 0 : continue
             if index == 0 :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) #alpha=fillOpacity, 
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor='black', zorder=2, label=label_line,linewidth=line_width) #line_col
             else :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width) # alpha=fillOpacity,
+                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor='black', zorder=2, label="_",linewidth=line_width) #line_col
             ax.add_patch(patch)
     ax.legend(fontsize=14)
 
