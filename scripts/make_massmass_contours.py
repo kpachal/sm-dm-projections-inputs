@@ -15,7 +15,7 @@ plot_path = "plots/validation"
 
 # Couplings to test: you'll get a grid of all combinations
 test_gq = [0.25,0.15,0.1,0.05,0.01]
-test_gdm = 1.0
+test_gdm = [1.0,0.8,0.6,0.4,0.2]
 test_gl = [0.1,0.05,0.01,0.0]
 
 plotlims = {'hl-lhc' : (7500,1200), 'fcc-hh' : (15000,5000)}
@@ -121,9 +121,7 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
     V1_scan_monojetgrid = DMVectorModelScan(mmed=monojet_mmed, mdm=monojet_mdm,gq=0.25, gdm=1.0, gl=0.0)
     rescaler_fromV1_monojetgrid = Rescaler(V1_scan_monojetgrid)
     # And the actual scale factors: this is the slow bit
-    monojet_sfs_A1toV1 = rescaler_fromV1_monojetgrid.rescale_by_hadronic_xsec_monox(0.25, 1.0, 0.0,'vector')[(0.25,1.0,0.0)]
-    # For fast tests - NOT REAL, DON'T KEEP
-    #monojet_sfs_A1toV1 = rescaler_fromV1_monojetgrid.rescale_by_parton_level_xsec_monox(0.25, 1.0, 0.0,'vector')[(0.25,1.0,0.0)]
+    monojet_sfs_A1toV1 = rescaler_fromA1_monojetgrid.rescale_by_hadronic_xsec_monox(0.25, 1.0, 0.0,'vector')[(0.25,1.0,0.0)]
 
     # Debug: this should match one of the plots that comes later.
     debug_monojetv1 = monojet_exdepth_A1/monojet_sfs_A1toV1

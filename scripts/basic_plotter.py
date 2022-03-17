@@ -2,6 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
+import matplotlib.colors as cols
 import numpy as np
 
 from shapely.geometry import Polygon as shapely_pol
@@ -25,6 +26,11 @@ def scale_lightness(matplotlib_col, scale_l):
     h, l, s = colorsys.rgb_to_hls(*rgb)
     # manipulate h, l, s values and return as rgb
     return colorsys.hls_to_rgb(h, min(1, l * scale_l), s = s)
+
+def colorFader(c1,c2,mix=0): #fade (linear interpolate) from color c1 (at mix=0) to c2 (mix=1)
+    c1=np.array(ColorConverter.to_rgb(c1))
+    c2=np.array(ColorConverter.to_rgb(c2))
+    return cols.to_hex((1-mix)*c1 + mix*c2)
 
 def get_contours(xvals, yvals, zvals) :
 
@@ -148,7 +154,7 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
 
   return contour_list
 
-def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False, xhigh=None, yhigh=None) :
+def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False, transluscent=False,xhigh=None, yhigh=None) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -178,8 +184,17 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
     # Need 3 cute colours
     if is_scaling :
         ncols = len(contour_groups)
-        fill_colours = [scale_lightness('cornflowerblue',0.5+i*1.0/ncols) for i in range(ncols)]
-        line_colours = fill_colours
+        # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
+        #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
+        if ncols < 2 :
+          fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
+        else :
+          fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
+        if transluscent :
+          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
+          line_colours = ['black' for i in fill_colours]
+        else :
+          line_colours = fill_colours          
         line_width = 1
     else :
         colours_raw = ['cornflowerblue','turquoise','mediumorchid']
@@ -194,7 +209,7 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
             else :
                 patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width) # alpha=fillOpacity,
             ax.add_patch(patch)
-    ax.legend(fontsize=14)
+    ax.legend(fontsize=14,loc='upper right')
 
     #plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
     plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
@@ -224,16 +239,22 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
     ax.set_ylabel(ylabel, fontsize=16)
 
     if addText :
+        # For low corner: 0.15/0.19/0.23
         if addText.count('\n') == 1 :
-            plt.figtext(0.16,0.15,addText,size=14)
+            plt.figtext(0.16,0.77,addText,size=14)
         elif addText.count('\n') == 2 :
-            plt.figtext(0.16,0.19,addText,size=14)
-        else : plt.figtext(0.16,0.23,addText,size=14)
+            plt.figtext(0.16,0.72,addText,size=14)
+        else : plt.figtext(0.16,0.82,addText,size=14)
 
-    # Need 3 cute colours
+    # Need 3+ cute colours
     if is_scaling :
         ncols = len(contour_groups)
-        fill_colours = [scale_lightness('cornflowerblue',0.5+i*1.0/ncols) for i in range(ncols)]
+        # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
+        #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
+        if ncols < 2 :
+          fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
+        else :
+          fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
         if transluscent :
           fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
           line_colours = ['black' for i in fill_colours]
@@ -254,7 +275,7 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
             else :
                 patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width)
             ax.add_patch(patch)
-    ax.legend(fontsize=14)
+    ax.legend(fontsize=14,loc='upper right')
 
     plt.savefig(plot_path+'/directdetection_{0}.pdf'.format(this_tag),bbox_inches='tight')
 
