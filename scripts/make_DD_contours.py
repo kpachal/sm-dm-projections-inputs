@@ -45,6 +45,8 @@ for collider in ['hl-lhc', 'fcc-hh'] :
     for model in ['vector','axial'] :
         ylabel = "$\sigma_{SD}$" if 'axial' in model else "$\sigma_{SI}$"
         ylabel = ylabel + " ($\chi$-nucleon) [cm$^2$]" # No difference between proton & neutron for SD unless comparing to other limits
+
+        # Limits with fixed couplings
         with open('{0}_exclusion_contours_{1}.pkl'.format(model,collider), "rb") as poly_file:
             loaded_polygons = pickle.load(poly_file)
 
