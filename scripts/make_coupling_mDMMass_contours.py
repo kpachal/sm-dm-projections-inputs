@@ -21,11 +21,11 @@ plot_path = "plots/validation"
 test_coupling_scenarios = {
   "gq_lim" : {
     "test_gq" : np.logspace(np.log10(0.001),0,101),
-    "test_gdm" : [0.0, 1.0],
+    "test_gdm" : [0.0, 0.1, 0.2, 0.5, 1.0],
     "test_gl" : [0.0],
   },
   "gdm_lim" : {
-    "test_gq" : [0.01, 0.1, 0.25],
+    "test_gq" : [0.01, 0.05, 0.1, 0.15, 0.25],
     "test_gdm" : np.logspace(np.log10(0.001),0,101),
     "test_gl" : [0.0]
   },
@@ -37,16 +37,16 @@ test_coupling_scenarios = {
 }
 
 # Should be able to use this for everything
-mMed_test = np.linspace(0,15000,1501)
-print("mMed_test:")
-print(mMed_test)
+mDM_test = np.linspace(0,5000,1001)
+print("mDM_test:")
+print(mDM_test)
 test_mass_scenarios = {
-  "dmDecoupled" : [100000 for i in mMed_test],
-  "dmLight" : [1.0 for i in mMed_test],
-  "DPLike" : [i/3.0 for i in mMed_test]
+#  "dmDecoupled" : [100000 for i in mMed_test],
+#  "dmLight" : [1.0 for i in mMed_test],
+  "DPLike_fixedMMed" : [i*3.0 for i in mDM_test]
 }
 
-plotlims = {'hl-lhc' : 7500, 'fcc-hh' : 15000}
+plotlims = {'hl-lhc' : 5000, 'fcc-hh' : 5000}
 
 # Begin main code
 ####################
@@ -157,8 +157,8 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
 
     # For dijet and dilepton
     line_scan_A2 = DMAxialModelScan(
-      mmed=mMed_test,
-      mdm=test_masses,
+      mmed=test_masses,
+      mdm=mDM_test,
       gq=0.1,
       gdm=1.0,
       gl=0.01
@@ -168,15 +168,15 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
     if "hl-lhc" in collider :
       initial_depths_dilepton = dilepton_xsec_limit.extract_exclusion_depths(line_scan_A2)
     else :
-      initial_depths_dilepton = np.array([np.nan for i in mMed_test])
+      initial_depths_dilepton = np.array([np.nan for i in test_masses])
     rescaler_fromA2_dilepton = Rescaler(line_scan_A2,initial_depths_dilepton,0.1)
 
     # For monojet: interpolate from existing limit grid (separate A and V)
-    line_scan_A1 = DMAxialModelScan(mmed=mMed_test,mdm=test_masses,gq=0.25,gdm=1.0,gl=0.0)
-    initial_depths_axial_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_A1, (mMed_test, test_masses))
+    line_scan_A1 = DMAxialModelScan(mmed=test_masses,mdm=mDM_test,gq=0.25,gdm=1.0,gl=0.0)
+    initial_depths_axial_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_A1, (test_masses,mDM_test))
     rescaler_fromA1_monojet = Rescaler(line_scan_A1, initial_depths_axial_monojet,0.4)
-    line_scan_V1 = DMVectorModelScan(mmed=mMed_test,mdm=test_masses,gq=0.25,gdm=1.0,gl=0.0)
-    initial_depths_vector_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_V1, (mMed_test, test_masses))
+    line_scan_V1 = DMVectorModelScan(mmed=test_masses,mdm=mDM_test,gq=0.25,gdm=1.0,gl=0.0)
+    initial_depths_vector_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_V1, (test_masses,mDM_test))
     rescaler_fromV1_monojet = Rescaler(line_scan_V1, initial_depths_vector_monojet,0.4)
 
     for test_coupling, coupling_dict in test_coupling_scenarios.items() :
@@ -201,7 +201,7 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
         other_first, other_second = np.meshgrid(test_gq, test_gdm)
         others_tag = "gq{0}_gdm{1}"
 
-      limitplot_x, limitplot_y = np.meshgrid(mMed_test,test_couplings)
+      limitplot_x, limitplot_y = np.meshgrid(mDM_test,test_couplings)
       full_limits_dijet_axial = rescaler_fromA2_dijet.rescale_by_br_quarks(test_gq, test_gdm, test_gl,'axial')
       full_limits_dijet_vector = rescaler_fromA2_dijet.rescale_by_br_quarks(test_gq, test_gdm, test_gl,'vector')
       full_limits_dilepton_axial = rescaler_fromA2_dilepton.rescale_by_br_leptons(test_gq, test_gdm, test_gl,'axial')
@@ -259,12 +259,12 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
         dilepton_contours_vector[thiskey] = get_contours(xdil_vec, ydil_vec, zdil_vec)[0]
 
   # Save output in a clean way so that paper plot making script can be separate without re-running
-  with open("vector_exclusion_contours_couplingmass_{0}.pkl".format(collider), "wb") as poly_file:
+  with open("vector_exclusion_contours_couplingDMmass_{0}.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_vector,
                 "monojet" : monojet_contours_vector,
                 "dilepton" : dilepton_contours_vector}
     pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)    
-  with open("axial_exclusion_contours_couplingmass_{0}.pkl".format(collider), "wb") as poly_file:
+  with open("axial_exclusion_contours_couplingDMmass_{0}.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_axial,
                 "monojet" : monojet_contours_axial,
                 "dilepton" : dilepton_contours_axial}
@@ -280,7 +280,7 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
                 "dilepton" : dilepton_contours_axial}
   }
   for model, middict in big_ol_dict.items() :
-    outfile = ROOT.TFile.Open("{0}_exclusion_contours_couplingmass_{1}.root".format(model,collider), "RECREATE")
+    outfile = ROOT.TFile.Open("{0}_exclusion_contours_couplingDMmass_{1}.root".format(model,collider), "RECREATE")
     outfile.cd()    
     for analysis, smalldict in middict.items() :
       for key, contour in smalldict.items() :

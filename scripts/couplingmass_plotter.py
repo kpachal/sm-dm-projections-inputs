@@ -25,7 +25,7 @@ def transform_coupling(couplingstring) :
     return outstring
 
 # Load pickle files with polygons.
-for collider in ['hl-lhc'] : #, 'fcc-hh'] :
+for collider in ['hl-lhc', 'fcc-hh'] :
     for model in ['vector','axial'] :
         print("Starting model",model)
         with open('{0}_exclusion_contours_couplingmass_{1}.pkl'.format(model,collider), "rb") as poly_file:
@@ -58,7 +58,7 @@ for collider in ['hl-lhc'] : #, 'fcc-hh'] :
                         if not coupling_set in all_couplingsets : all_couplingsets.append(coupling_set)
                         # First set of plots: all analyses contributing to a particular limit scenario
                         couplings_separate = coupling_set.split("_")
-                        tag = "{0}_{1}_{2}_{3}".format(model,couplingscan,dmhypothesis,coupling_set)
+                        tag = "mMed_{0}_{1}_{2}_{3}".format(model,couplingscan,dmhypothesis,coupling_set)
                         label_line =  "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),masslines[dmhypothesis],transform_coupling(couplings_separate[0]),transform_coupling(couplings_separate[1]))
                         legend_lines = []
                         contours_list = []
@@ -83,7 +83,7 @@ for collider in ['hl-lhc'] : #, 'fcc-hh'] :
                         if "monojet" in analysis_list.keys() : contours_list_monojet[dmhypothesis] = analysis_list["monojet"]
                         if "dilepton" in analysis_list.keys() : contours_list_dilepton[dmhypothesis] = analysis_list["dilepton"]
                     
-                    tag = "{0}_{1}_{2}".format(model,couplingscan,coupling_set)
+                    tag = "mMed_{0}_{1}_{2}".format(model,couplingscan,coupling_set)
                     label_line_dijet =  "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),"Dijet",transform_coupling(couplings_separate[0]),transform_coupling(couplings_separate[1]))
                     label_line_monojet =  "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),"Monojet",transform_coupling(couplings_separate[0]),transform_coupling(couplings_separate[1]))
                     label_line_dilepton =  "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),"Dilepton",transform_coupling(couplings_separate[0]),transform_coupling(couplings_separate[1]))

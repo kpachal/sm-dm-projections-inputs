@@ -100,8 +100,10 @@ def get_contours(xvals, yvals, zvals) :
 def merge_exclusions(contour_list) :
 
     # If there's only one, do nothing.
-    if len(contour_list) < 2 :
+    if len(contour_list) == 1 :
       return contour_list[0]
+    elif len(contour_list) == 0 :
+      return None
 
     # No longer matters which input each contour is from:
     # flatten the input to a simple list of polygons
@@ -261,7 +263,7 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
 
     plt.close(fig)    
 
-def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots",ylabel="coupling", addText = "",is_scaling=False, transluscent=False,xlow=None, xhigh=None, ylow=None,yhigh=None, use_colourscheme=False) :
+def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots",xlabel="",ylabel="coupling", addText = "",is_scaling=False, transluscent=False,xlow=None, xhigh=None, ylow=None,yhigh=None, use_colourscheme=False) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -282,7 +284,10 @@ def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plo
     #ratio = get_aspect_ratio(ax)
     #ax.set_aspect(ratio)
 
-    ax.set_xlabel(r"m$_{\rm med}$ [GeV]")
+    if not xlabel :
+      ax.set_xlabel(r"m$_{\rm med}$ [GeV]")
+    else :
+      ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)   
 
     if addText :
