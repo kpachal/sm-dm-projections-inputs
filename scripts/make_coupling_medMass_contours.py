@@ -25,7 +25,7 @@ test_coupling_scenarios = {
     "test_gl" : [0.0],
   },
   "gdm_lim" : {
-    "test_gq" : [0.01, 0.05, 0.1, 0.25],
+    "test_gq" : [0.01, 0.05, 0.1, 0.15, 0.25],
     "test_gdm" : np.logspace(np.log10(0.001),0,101),
     "test_gl" : [0.0]
   },
