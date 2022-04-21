@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment></data-comment>
+  <data-label>XENON100, 2016, 477 live days, SD-proton</data-label>
+  <data-reference>&lt;a href="https://arxiv.org/abs/1609.06154"&gt;arxiv.org:1609.06154&lt;/a&gt;</data-reference>
+  <data-values>{[  6       1021678e-39;  7	   23797.11e-39;  8	   3762.519e-39;  9	   1108.418e-39;  10	   451.2961e-39;  11	   219.4543e-39;  12	  124.999e-39;  15	   38.17561e-39;  20	   13.70416e-39;  30	   6.773326e-39; 50	   5.188352e-39;  100	   6.82526e-39; 200	   11.64865e-39;  1000	   53.71852e-39 ]}</data-values>
+  <date-of-announcement type="date">2016-09-20</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>XENON100</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+pdeperio: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2016</year>
+</limit>

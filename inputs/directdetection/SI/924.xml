@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment></data-comment>
+  <data-label>PICO-2L Run-2 90% SI limits</data-label>
+  <data-reference>arXiv:1601.03729v1 [astro-ph.CO]</data-reference>
+  <data-values>{[3.3113 2.9424e-37; 3.6308 6.6031e-39; 3.9811 8.2564e-40; 4.3652 2.2050e-40; 4.7863 8.4535e-41; 5.2481 3.9789e-41; 5.7544 2.1636e-41; 6.3096 1.3100e-41; 6.9183 8.6213e-42; 7.5858 6.0738e-42; 8.3176 4.5245e-42; 9.1201 3.5285e-42; 10.000 2.8602e-42; 10.965 2.3964e-42; 12.023 2.0648e-42; 13.183 1.8224e-42; 14.454 1.6422e-42; 15.849 1.5070e-42; 17.378 1.4052e-42; 19.055 1.3290e-42; 20.893 1.2728e-42; 22.909 1.2329e-42; 25.119 1.2064e-42; 31.623 1.1875e-42; 39.811 1.2237e-42; 50.119 1.3088e-42; 63.096 1.4429e-42; 79.433 1.6308e-42; 100.00 1.8813e-42; 125.89 2.2069e-42; 158.49 2.6246e-42; 199.53 3.1563e-42; 2511.9 3.8303e-42; 3162.3 4.6823e-42; 1000.0 1.3685e-41; 3162.3 4.2198e-41; 10000 1.3238e-40]} </data-values>
+  <date-of-announcement type="date">2016-01-14</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PICO-2L</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+rneilson: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2016</year>
+</limit>

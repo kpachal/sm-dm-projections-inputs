@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>No quenching model with WIMP masses greater than 1.8 GeV</data-comment>
+  <data-label>DarkSide-50 No Quenching Fluctuation, SI 90% CL, &gt;1.8 GeV</data-label>
+  <data-reference>&lt;a href="https://arxiv.org/pdf/1802.06994.pdf"&gt; arXiv:1802.06994 &lt;/a&gt;</data-reference>
+  <data-values>{[1.8  3.11593e-41;
+1.85  2.54827e-41;
+1.9  2.15168e-41;
+2  1.62113e-41;
+2.25  1.04412e-41;
+2.5  8.14235e-42;
+3  5.16829e-42;
+3.5  3.87196e-42;
+4  1.97423e-42;
+5  7.74109e-43;
+6  4.95457e-43;
+8  3.19032e-43;
+10  2.57486e-43;
+15  2.52362e-43;
+20  3.33551e-43]}</data-values>
+  <date-of-announcement type="date" nil="true"></date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>DarkSide</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+pauser: false
+</nomhash>
+  <public type="boolean">true</public> 
+  <result-type>Exp</result-type>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2018</year>
+</limit>

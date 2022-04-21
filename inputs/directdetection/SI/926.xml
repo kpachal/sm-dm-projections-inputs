@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment></data-comment>
+  <data-label>PICO-60 90% SI limits</data-label>
+ <data-reference>arXiv:1510.07754v1 [hep-ex]</data-reference>
+  <data-values>{[5.7544 5.9395e-32; 6.3096 7.4436e-36; 6.9183 3.3431e-37; 7.5858 4.7670e-38; 8.3176 1.0281e-38; 9.1201 2.7372e-39; 10.000 7.9703e-40; 10.965 2.3784e-40; 12.023 7.0202e-41; 13.183 2.0991e-41; 14.454 6.8703e-42; 15.849 2.5886e-42; 17.378 1.1308e-42; 19.055 5.6311e-43; 20.893 3.1350e-43; 22.909 1.9159e-43; 25.119 1.2672e-43; 31.623 5.9284e-44; 39.811 3.7195e-44; 50.119 2.8718e-44; 63.096 2.5695e-44; 79.433 2.5504e-44; 100.00 2.7208e-44; 125.89 3.0500e-44; 158.49 3.5375e-44; 199.53 4.2000e-44; 251.19 5.0678e-44; 316.23 6.1846e-44; 1000.0 1.8216e-43; 3162.3 5.6512e-43; 10000 1.7768e-42]}</data-values>
+  <date-of-announcement type="date">2015-10-27</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PICO-60 CF_{3}I</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+rneilson: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2015</year>
+</limit>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>Spin-dependent proton cross section</data-comment>
+  <data-label>PICO-60 90% SDp limits</data-label>
+  <data-reference>arXiv:1510.07754v1 [hep-ex]</data-reference>
+  <data-values>{[5.7544 2.4090e-29; 6.3096 3.0213e-33; 6.9183 1.3579e-34; 7.5858 1.9381e-35; 8.3176 4.1855e-36; 9.1201 1.1270e-36; 10.000 3.6303e-37; 10.965 1.3652e-37; 12.023 5.9017e-38; 13.183 2.8810e-38; 14.454 1.5602e-38; 15.849 9.2177e-39; 17.378 5.8668e-39; 19.055 3.9775e-39; 20.893 2.8473e-39; 22.909 2.1356e-39; 25.119 1.6682e-39; 31.623 1.0405e-39; 39.811 7.6307e-40; 50.119 6.3110e-40; 63.096 5.7249e-40; 79.433 5.5900e-40; 100.00 5.7902e-40; 125.89 6.2826e-40; 158.49 7.0646e-40; 199.53 8.1612e-40; 251.19 9.6208e-40; 316.23 1.1516e-39; 1000.0 3.2112e-39; 3162.3 9.7815e-39; 10000 3.0575e-38]}</data-values>
+  <date-of-announcement type="date">2015-10-27</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PICO-60 CF_{3}I</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+rneilson: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2015</year>
+</limit>

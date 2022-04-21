@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment></data-comment>
+  <data-label>XENON1T Migdal Effect based limits, S2 only</data-label>
+  <data-reference>arXiv: &lt;a href=&quot;https://arxiv.org/abs/1907.12771&quot;&gt;1907.12771&lt;/a&gt;</data-reference>
+  <data-values>{[0.11 2.80297860982e-35; 0.12 1.39005928999e-35; 0.13 7.92525141953e-36; 0.14 4.88519136844e-36; 0.2 7.37224192334e-37; 0.5 3.71622754018e-38; 0.55 2.99322603839e-38; 0.56 2.85748137344e-38; 0.57 1.30649355729e-38; 0.58 8.12370263458e-39; 0.59 7.70729923221e-39; 0.7 4.30876204986e-39; 1.0 1.57540576941e-39; 2.0 2.31748879958e-40]}</data-values>
+  <date-of-announcement type="date" nil="true"></date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>XENON1T MIGD S2</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+pauser: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2019</year>
+</limit>

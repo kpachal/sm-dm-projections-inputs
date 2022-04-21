@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>spin-dependent proton cross section</data-comment>
+  <data-label>PandaX-II 3.3E4 kg-day SD proton limits</data-label>
+  <data-reference>Phys. Rev. Lett. 118, 071301 (2017), arXiv:1611.06553v3</data-reference>
+  <data-values>{[3.35 1.8794e-32;3.55 2.83723e-33;3.98107 1.35534e-34;5.01187 4.15802e-36;6.30957 4.15616e-37;7.94328 7.39611e-38;10 1.97136e-38;12.5893 7.90208e-39;15.8489 3.61405e-39;19.9526 2.15066e-39;25.1189 1.54588e-39;31.6228 1.29078e-39;39.8107 1.16788e-39;50.1187 1.20433e-39;63.0957 1.34805e-39;79.4328 1.53063e-39;100 1.78985e-39;125.893 2.15576e-39;158.489 2.57336e-39;199.526 3.1935e-39;251.189 3.9067e-39;316.228 4.79256e-39;398.107 5.90779e-39;501.187 7.5014e-39;630.957 9.8296e-39;794.328 1.2761e-38;1000 1.64504e-38]}</data-values>
+  <date-of-announcement type="date">2016-11-20</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PandaX</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+andytan0805: true
+yangyong: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2016</year>
+</limit>

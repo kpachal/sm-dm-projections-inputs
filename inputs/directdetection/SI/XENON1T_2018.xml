@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>Sigma normalized to WIMP-Nucleon</data-comment>
+  <data-label>Dark Matter Search Results from the XENON1T Experiment</data-label>
+  <data-reference>arXiv:1805.12562 </data-reference>
+  <data-values>{[6 2.485E-44; 8 2.049E-45; 9 9.399E-46; 10  5.388E-46; 15  1.173E-46; 20  5.657E-47; 30  4.052E-47; 40  4.479E-47; 50  5.258E-47; 70  6.792E-47; 100 9.124E-47; 150 1.313E-46; 200 1.715E-46; 400 3.342E-46; 1000  8.243E-46; 10000 8.205E-45]}</data-values>
+  <experiment>XENON1T</experiment>
+  <measurement-type>Dir</measurement-type>
+  <public type="boolean">true</public>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2018</year>
+</limit>
+
+
+
+

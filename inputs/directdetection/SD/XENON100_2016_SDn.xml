@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment></data-comment>
+  <data-label>XENON100, 2016, 477 live days, SD-neutron</data-label>
+  <data-reference>&lt;a href="https://arxiv.org/abs/1609.06154"&gt;arxiv.org:1609.06154&lt;/a&gt;</data-reference>
+  <data-values>{[  6        29973.08e-39;    7	    706.9527e-39;    8	    112.6688e-39;    9	    33.83873e-39;    10	    13.87351e-39;    11	    6.86812e-39;     12	    3.967343e-39;    15	    1.268271e-39;    20	    0.5006484e-39;   30	    0.2472898e-39;   50	    0.2004751e-39;   100	    0.2844049e-39;   200	    0.5031265e-39;   500	    1.197866e-39;    1000	    2.354698e-39]}</data-values>
+  <date-of-announcement type="date">2016-09-20</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>XENON100</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+pdeperio: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2016</year>
+</limit>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>using Klos et al.</data-comment>
+  <data-label>XENON1T 90% C.L. U.L. on the SD WIMP-neutron cross section</data-label>
+  <data-reference>Aprile et al., Phys. Rev. Lett. 122, 141301 (2019), arxiv:1902.03234</data-reference>
+  <data-values>{[6.0000 3.6682e-39;6.8410 1.1741e-39;7.8000 3.8597e-40;8.8933 1.5320e-40;10.1399 7.3071e-41;11.5612 3.9550e-41;13.1818 2.3887e-41;15.0295 1.5835e-41;17.1362 1.1362e-41;19.5382 8.7869e-42;22.2770 7.3104e-42;25.3996 6.5304e-42;28.9599 6.2519e-42;33.0193 6.3919e-42;37.6477 6.8522e-42;42.9248 7.5057e-42;48.9417 8.2892e-42;55.8020 9.2107e-42;63.6238 1.0280e-41;72.5421 1.1506e-41;82.7105 1.2899e-41;94.3043 1.4482e-41;107.5231 1.6283e-41;122.5949 1.8332e-41;139.7793 2.0666e-41;159.3725 2.3326e-41;181.7121 2.6359e-41;207.1831 2.9820e-41;236.2244 3.3769e-41;269.3365 3.8279e-41;307.0900 4.3431e-41;350.1355 4.9318e-41;399.2148 5.6048e-41;455.1737 6.3741e-41;518.9764 7.2537e-41;591.7225 8.2597e-41;674.6656 9.4102e-41;769.2350 1.0726e-40;877.0604 1.2230e-40;1000.0000 1.3951e-40]}</data-values>
+  <date-of-announcement type="date">2019-04-30</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>XENON1T</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+jhowl01: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2019</year>
+</limit>

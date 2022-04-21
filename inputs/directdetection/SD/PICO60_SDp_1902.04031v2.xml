@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>Spin-dependent proton cross section</data-comment>
+  <data-label>PICO-60 C3F8 Complete Exposure 90% SDp limits</data-label>
+  <data-reference>arXiv:1902.04031v2 [astro-ph.CO]</data-reference>
+  <data-values>{[2.7542 1.5963e-36; 3.0200  7.2146e-38; 3.3113 1.6675e-38; 3.6308 3.9279e-39; 3.9811 1.5982e-39; 4.3652 8.0302e-40; 4.7863 4.4673e-40; 5.2481 2.7069e-40; 5.7544 1.9277e-40; 6.3096 1.3766e-40; 6.9183 1.0545e-40; 7.5858 8.3942e-41; 8.3176 6.9240e-41; 9.1201 5.8732e-41; 10.000 5.1877e-41; 10.965 4.5991e-41; 12.023 4.1587e-41; 13.183 3.8886e-41; 14.454 3.6786e-41; 15.849 3.4587e-41; 17.378 3.3472e-41; 19.055 3.2645e-41; 20.893 3.2056e-41; 22.909 3.1734e-41; 25.119 3.1585e-41; 31.623 3.2228e-41; 39.811 3.4011e-41; 50.119 3.6985e-41; 63.096 4.1332e-41; 79.433 4.7184e-41; 100.00 5.4948e-41; 125.89 6.4818e-41; 158.49 7.6788e-41; 199.53 9.3926e-41; 251.19 1.1422e-40; 316.23 1.3842e-40; 1000.0 4.1409e-40; 3162.3 1.2783e-39; 10000 3.9659e-39; 31623 1.2689e-38; 100000 4.0017e-38]}</data-values>
+  <date-of-announcement type="date">2019-02-11</date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PICO-60 C_{3}F_{8}</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+fallows: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SD</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2019</year>
+</limit>

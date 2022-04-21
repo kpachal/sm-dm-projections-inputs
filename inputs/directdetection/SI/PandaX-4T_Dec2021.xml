@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<limit>
+  <data-comment>90% C.L. upper limit vs. mass for the SI WIMP-
+nucleon elastic cross section from PandaX-4T commissioning
+data</data-comment>
+  <data-label>PandaX-4T Commissioning</data-label>
+  <data-reference>&lt;a href="https://doi.org/10.1103/PhysRevLett.127.261802"&gt;Dark Matter Search Results from the PandaX-4T Commissioning Run&lt;/a&gt;
+&lt;a href="https://arxiv.org/abs/2107.13438v1"&gt;arxiv:21077.1343&lt;/a&gt;</data-reference>
+  <data-values>{[5 2.42802e-44;
+6 6.08135e-45;
+8 1.21346e-45;
+10 4.31833e-46;
+15 1.12028e-46;
+20 5.46222e-47;
+30 3.96108e-47;
+40 3.83312e-47;
+60 3.96643e-47;
+100 6.40519e-47;
+150 8.54014e-47;
+250 1.37265e-46;
+400 1.95257e-46;
+1000 4.95826e-46;
+10000 4.73043e-45]}</data-values>
+  <date-of-announcement type="date" nil="true"></date-of-announcement>
+  <date-of-run-end type="date" nil="true"></date-of-run-end>
+  <date-of-run-start type="date" nil="true"></date-of-run-start>
+  <default-color>Blk</default-color>
+  <default-style>Line</default-style>
+  <experiment>PandaX</experiment>
+  <measurement-type>Dir</measurement-type>
+  <nomhash type="yaml">--- 
+pauser: false
+</nomhash>
+  <public type="boolean">true</public>
+  <result-type>Exp</result-type>
+  <spin-dependency>SI</spin-dependency>
+  <x-rescale>1</x-rescale>
+  <x-units>GeV</x-units>
+  <y-rescale>1</y-rescale>
+  <y-units>cm^2</y-units>
+  <year type="integer">2021</year>
+</limit>
