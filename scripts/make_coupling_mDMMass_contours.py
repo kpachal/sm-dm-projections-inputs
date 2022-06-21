@@ -21,11 +21,11 @@ plot_path = "plots/validation"
 test_coupling_scenarios = {
   "gq_lim" : {
     "test_gq" : np.logspace(np.log10(0.001),0,101),
-    "test_gdm" : [0.0, 0.1, 0.2, 0.5, 1.0],
+    "test_gdm" : [0.0, 0.05, 0.1, 0.2, 1.0],
     "test_gl" : [0.0],
   },
   "gdm_lim" : {
-    "test_gq" : [0.01, 0.05, 0.1, 0.15, 0.25],
+    "test_gq" : [0.01, 0.02, 0.05, 0.1, 0.25],
     "test_gdm" : np.logspace(np.log10(0.001),0,101),
     "test_gl" : [0.0]
   },
@@ -101,23 +101,23 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
 
   # Dilepton, if doing
   if "hl-lhc" in collider :
-      dilepton_atlas_data = np.load(input_path+'/{0}/dilepton_atlas/{0}-dilepton.npz'.format(collider))
-      dilepton_atlas_mmed_th = dilepton_atlas_data['xvals_theory']
-      dilepton_atlas_xsec_th = dilepton_atlas_data['yvals_theory']
-      dilepton_atlas_mmed_obs = dilepton_atlas_data['xvals_obs']
-      dilepton_atlas_xsec_obs = dilepton_atlas_data['yvals_obs']
+      dilepton_data = np.load(input_path+'/{0}/dilepton_atlas/{0}-dilepton.npz'.format(collider))
+      dilepton_mmed_th = dilepton_data['xvals_theory']
+      dilepton_xsec_th = dilepton_data['yvals_theory']
+      dilepton_mmed_obs = dilepton_data['xvals_obs']
+      dilepton_xsec_obs = dilepton_data['yvals_obs']
       # Need to make a dictionary for the y limits from data,
       # because of width dependence. Let's just set it to 0.08
-      dilepton_atlas_obs_lists = {0.08 : dilepton_atlas_xsec_obs}
+      dilepton_obs_lists = {0.08 : dilepton_xsec_obs}
 
       # Extract initial exclusion depth in an appropriate baseline scan
       # Parameters obtained from Jared: this is a 1 TeV DM particle
       # with couplings 0.1, 1, 0.1 and an axial model.
       dilepton_xsec_limit = CrossSectionLimit_Dilepton(
-        mmed_limit=dilepton_atlas_mmed_obs,
-        xsec_limit=dilepton_atlas_obs_lists,
-        mmed_theory=dilepton_atlas_mmed_th,
-        xsec_theory=dilepton_atlas_xsec_th,
+        mmed_limit=dilepton_mmed_obs,
+        xsec_limit=dilepton_obs_lists,
+        mmed_theory=dilepton_mmed_th,
+        xsec_theory=dilepton_xsec_th,
         mdm=1000,
         gq=0.1,
         gdm=1.0,

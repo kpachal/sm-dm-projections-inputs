@@ -14,8 +14,8 @@ input_path = "../inputs/"
 plot_path = "plots/validation"
 
 # Couplings to test: you'll get a grid of all combinations
-test_gq = [0.25,0.15,0.1,0.05,0.01]
-test_gdm = [1.0,0.8,0.6,0.4,0.2]
+test_gq = [0.25,0.1,0.05,0.02,0.01]
+test_gdm = [0.0, 0.05, 0.1, 0.2, 1.0]
 test_gl = [0.1,0.05,0.01,0.0]
 
 plotlims = {'hl-lhc' : (7500,1200), 'fcc-hh' : (15000,5000)}
@@ -144,29 +144,31 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
     dix, diy, diz = clean_grid(target_scan_A2.mmed, target_scan_A2.mdm, dijet_depth)
     dijet_contours_vector[coupling] = get_contours(dix, diy, diz)[0]
 
-  # Add dilepton matching all of the above for hl-lhc only
+  # Add dilepton matching all of the above for hl-lhc only.
+  # Switching to CMS.
+  # And back to ATLAS ....
   dilepton_contours_axial = {}
   dilepton_contours_vector = {}
   dilepton_exclusiondepths_axial = {}
   dilepton_exclusiondepths_vector = {}
   if "hl-lhc" in collider :
-      dilepton_atlas_data = np.load(input_path+'/{0}/dilepton_atlas/{0}-dilepton.npz'.format(collider))
-      dilepton_atlas_mmed_th = dilepton_atlas_data['xvals_theory']
-      dilepton_atlas_xsec_th = dilepton_atlas_data['yvals_theory']
-      dilepton_atlas_mmed_obs = dilepton_atlas_data['xvals_obs']
-      dilepton_atlas_xsec_obs = dilepton_atlas_data['yvals_obs']
+      dilepton_data = np.load(input_path+'/{0}/dilepton_atlas/{0}-dilepton.npz'.format(collider))
+      dilepton_mmed_th = dilepton_data['xvals_theory']
+      dilepton_xsec_th = dilepton_data['yvals_theory']
+      dilepton_mmed_obs = dilepton_data['xvals_obs']
+      dilepton_xsec_obs = dilepton_data['yvals_obs']
       # Need to make a dictionary for the y limits from data,
       # because of width dependence. Let's just set it to 0.08
-      dilepton_atlas_obs_lists = {0.08 : dilepton_atlas_xsec_obs}
+      dilepton_obs_lists = {0.08 : dilepton_xsec_obs}
 
       # Extract initial exclusion depth in an appropriate baseline scan
       # Parameters obtained from Jared: this is a 1 TeV DM particle
       # with couplings 0.1, 1, 0.1 and an axial model.
       dilepton_xsec_limit = CrossSectionLimit_Dilepton(
-        mmed_limit=dilepton_atlas_mmed_obs,
-        xsec_limit=dilepton_atlas_obs_lists,
-        mmed_theory=dilepton_atlas_mmed_th,
-        xsec_theory=dilepton_atlas_xsec_th,
+        mmed_limit=dilepton_mmed_obs,
+        xsec_limit=dilepton_obs_lists,
+        mmed_theory=dilepton_mmed_th,
+        xsec_theory=dilepton_xsec_th,
         mdm=1000,
         gq=0.1,
         gdm=1.0,
@@ -191,19 +193,7 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
         cleanx, cleany, cleanz = clean_grid(target_scan_A2.mmed, target_scan_A2.mdm,dilepton_depth)
         if (cleanz.size>0) : dilepton_contours_vector[coupling] = get_contours(cleanx, cleany, cleanz)[0]
 
-      # TODO add CMS when available ...
-
-  # Save output in a clean way so that paper plot making script can be separate without re-running
-  with open("vector_exclusion_depths_{0}.pkl".format(collider), "wb") as outfile_vec_depths :
-    out_dict = {"dijet" : dijet_exclusiondepths_vector,
-                "monojet" : monojet_exclusiondepths_vector,
-                "dilepton" : dilepton_exclusiondepths_vector}
-    pickle.dump(out_dict, outfile_vec_depths)
-  with open("axial_exclusion_depths_{0}.pkl".format(collider), "wb") as outfile_axial_depths :
-    out_dict = {"dijet" : dijet_exclusiondepths_axial,
-                "monojet" : monojet_exclusiondepths_axial,
-                "dilepton" : dilepton_exclusiondepths_axial}
-    pickle.dump(out_dict, outfile_axial_depths)    
+  # Save output in a clean way so that paper plot making script can be separate without re-running  
   with open("vector_exclusion_contours_{0}.pkl".format(collider), "wb") as poly_file:
     out_dict = {"dijet" : dijet_contours_vector,
                 "monojet" : monojet_contours_vector,

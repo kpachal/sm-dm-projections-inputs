@@ -1,5 +1,5 @@
 import pickle
-
+import numpy as np
 from basic_plotter import *
 
 plotlims = {'hl-lhc' : 
@@ -28,6 +28,16 @@ ylabels = {
 }
 
 xlabel = r"m$_{\rm med}$ [GeV]"
+
+def calculate_y(gq, gdm, mMed, mDM) :
+  mZ = 91.1876
+  e = 0.30282212088
+  thetaw = np.arcsin(np.sqrt(0.22290)) # from CODATA
+  epsilon = 2.0 * gq * (mMed/mZ - 1.0)/(e * np.cos(thetaw))
+  print("epsilon:",epsilon)
+  y = epsilon**2 * gdm**2/(4.0*np.pi) * (mDM/mMed)**4
+  print("y:",y)
+  return y
 
 def get_legend_line(couplingstring) :
     if "gdm" in couplingstring :
@@ -72,6 +82,9 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                         dict_bycoupling[couplingscan][dmhypothesis][couplings] = {}
                     if contour: dict_bycoupling[couplingscan][dmhypothesis][couplings][signature] = contour
             
+            print(dict_bycoupling)
+            exit(0)
+
             # And now we loop.
             for couplingscan in dict_bycoupling.keys() :
                 all_couplingsets = []

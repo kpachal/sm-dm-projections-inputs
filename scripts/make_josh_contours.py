@@ -20,34 +20,24 @@ plot_path = "plots/validation"
 # based on explicitly what we are trying to target
 test_coupling_scenarios = {
   "gq_lim" : {
-    "test_gq" : np.logspace(np.log10(0.001),0,101),
-    "test_gdm" : [0.0, 0.05, 0.1, 0.2, 1.0],
+    "test_gq" : np.logspace(np.log10(0.00001),0.01,101),
+    "test_gdm" : [1.0,1.1,2.5],
     "test_gl" : [0.0],
   },
   "gdm_lim" : {
-    "test_gq" : [0.01, 0.02, 0.05, 0.1, 0.25],
-    "test_gdm" : np.logspace(np.log10(0.001),0,101),
+    "test_gq" : [1.0,1.1,2.5],
+    "test_gdm" : np.logspace(np.log10(0.00001),0.01,101),
     "test_gl" : [0.0]
   },
-  "gl_lim" : {
-    "test_gq" : [0.01, 0.1, 0.25],
-    "test_gdm" : [0.0, 1.0],
-    "test_gl" : np.logspace(np.log10(0.001),0,101),
-  }
 }
 
 # Should be able to use this for everything
-mMed_test = np.linspace(0,15000,1501)
+mMed_test = np.linspace(0,1000,101)
 print("mMed_test:")
 print(mMed_test)
 test_mass_scenarios = {
-  "dmDecoupled" : [100000 for i in mMed_test],
   "dm1GeV" : [1.0 for i in mMed_test],
   "DPLike" : [i/3.0 for i in mMed_test],
-  "dm10MeV" : [0.01 for i in mMed_test],
-  "dm100MeV" : [0.1 for i in mMed_test],
-  "dm10GeV" : [10.0 for i in mMed_test],
-  "dm100GeV" : [100.0 for i in mMed_test]
 }
 
 plotlims = {'hl-lhc' : 7500, 'fcc-hh' : 15000}
@@ -262,19 +252,7 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
         drawContourPlotRough([[xdil_vec, ydil_vec, zdil_vec]], addPoints = False, this_tag = thiskey+"_dilepton",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
         dilepton_contours_vector[thiskey] = get_contours(xdil_vec, ydil_vec, zdil_vec)[0]
 
-  # Save output in a clean way so that paper plot making script can be separate without re-running
-  with open("vector_exclusion_contours_couplingmass_{0}.pkl".format(collider), "wb") as poly_file:
-    out_dict = {"dijet" : dijet_contours_vector,
-                "monojet" : monojet_contours_vector,
-                "dilepton" : dilepton_contours_vector}
-    pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)    
-  with open("axial_exclusion_contours_couplingmass_{0}.pkl".format(collider), "wb") as poly_file:
-    out_dict = {"dijet" : dijet_contours_axial,
-                "monojet" : monojet_contours_axial,
-                "dilepton" : dilepton_contours_axial}
-    pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)
-
-  # And some TGraphs for ease
+  # Output TGraphs for Josh
   big_ol_dict = {
     "vector" : {"dijet" : dijet_contours_vector,
                 "monojet" : monojet_contours_vector,
@@ -283,8 +261,9 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
                 "monojet" : monojet_contours_axial,
                 "dilepton" : dilepton_contours_axial}
   }
+  print(big_ol_dict)
   for model, middict in big_ol_dict.items() :
-    outfile = ROOT.TFile.Open("{0}_exclusion_contours_couplingmass_{1}.root".format(model,collider), "RECREATE")
+    outfile = ROOT.TFile.Open("{0}_exclusion_contours_forjosh_{1}.root".format(model,collider), "RECREATE")
     outfile.cd()    
     for analysis, smalldict in middict.items() :
       for key, contour in smalldict.items() :
