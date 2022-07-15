@@ -38,12 +38,16 @@ test_coupling_scenarios = {
 
 # Should be able to use this for everything
 mDM_test = np.linspace(0,5000,1001)
-print("mDM_test:")
-print(mDM_test)
+mDM_test[0] = 1.0
 test_mass_scenarios = {
-#  "dmDecoupled" : [100000 for i in mMed_test],
-#  "dmLight" : [1.0 for i in mMed_test],
-  "DPLike_fixedMMed" : [i*3.0 for i in mDM_test]
+  "ratio2p5_fixedMMed" : [i*2.5 for i in mDM_test],
+  "ratio3_fixedMMed" : [i*3.0 for i in mDM_test],
+  "ratio5_fixedMMed" : [i*5.0 for i in mDM_test],
+  "ratio10_fixedMMed" : [i*10.0 for i in mDM_test],
+#  "mMed50GeV_fixedMMed" : [50.0 for i in mDM_test],
+#  "mMed1000GeV_fixedMMed" : [1000.0 for i in mDM_test]
+  "ratio100_fixedMMed" : [i*100.0 for i in mDM_test],
+  "ratio1000_fixedMMed" : [i*1000.0 for i in mDM_test],
 }
 
 plotlims = {'hl-lhc' : 5000, 'fcc-hh' : 5000}

@@ -19,16 +19,20 @@ import colorsys
 # This is just how many points we get - should be enough for anything
 colourmap = cm.get_cmap('Blues_r', 200)
 
-def get_aspect_ratio(ax, isloglog=False) :
+def get_aspect_ratio(ax, isloglog=False, islinearlog=False) :
   ratio = 1.0
   xleft, xright = ax.get_xlim()
   ybottom, ytop = ax.get_ylim()
-  if not isloglog :
-    return abs((xright-xleft)/(ybottom-ytop))*ratio
-  else :
+  if isloglog :
     nUnitsX = np.log10(xright) - np.log10(xleft)
     nUnitsY = np.log10(ytop) - np.log10(ybottom)
     return nUnitsX/nUnitsY
+  elif islinearlog :
+    nUnitsY = np.log10(ytop) - np.log10(ybottom)
+    nUnitsX = (xright-xleft)
+    return abs(nUnitsX/nUnitsY)
+  else :
+    return abs((xright-xleft)/(ybottom-ytop))*ratio    
 
 def scale_lightness(matplotlib_col, scale_l):
     rgb = ColorConverter.to_rgb(matplotlib_col)
@@ -126,14 +130,21 @@ def merge_exclusions(contour_list) :
 
     return poly_list 
 
-def get_gradient_fill(axes,contour,use_colour) :
+def get_gradient_fill(axes,contour,use_colour,logx,logy) :
   (xmin, ymin, xmax, ymax) = contour.bounds
   z = np.empty((1, 100, 4), dtype=float)
   rgb = ColorConverter.to_rgb(use_colour)
   # Just basically array of 100 steps in gradient with rgb
   z[:,:,:3] = rgb
   z[:,:,-1] = np.linspace(0, 0.9, 100)[None,:] # Go to 1 for true solid
-  im = axes.imshow(z, aspect=get_aspect_ratio(axes), extent=[xmin, xmax, ymin, ymax],
+  # Aspect ratio nonsense
+  if logx and logy :
+    aspect = get_aspect_ratio(axes,isloglog=True)
+  elif logy and not logx :
+    aspect = get_aspect_ratio(axes,islinearlog=True)
+  else :
+    aspect = get_aspect_ratio(axes)
+  im = axes.imshow(z, aspect=aspect, extent=[xmin, xmax, ymin, ymax],
                    origin='lower')
   return im
 
@@ -215,7 +226,104 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
 
   return contour_list
 
-def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False, transluscent=False,xlow=None,xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [],gradient_fill=[],text_spot = 0) :
+def coreDrawFunction(axes,contour_groups,legend_lines,addText = "",is_scaling=False, transluscent=False,xlow=None,xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [],gradient_fill=[],dashed_lines=[], dashed_legends=[],text_spot = 0,logx=False,logy=False) :
+
+    # Check input
+    if not dash_contour : 
+      dash_contour = [False for i in contour_groups]
+    elif len(dash_contour) != len(contour_groups) :
+      print("Error: dash_contour list must have an entry for each contour!")
+      exit(1)
+    if not gradient_fill :
+      gradient_fill = [False for i in contour_groups]
+    elif len(gradient_fill) != len(contour_groups) :
+      print("Error: gradient_fill list must have an entry for each contour!")    
+      exit(1)
+
+    if addText :
+        text_x = 0.25 if not text_spot else text_spot[0]
+        text_y = 0.82 if not text_spot else text_spot[1]
+        text_ploty = text_y - 0.05*addText.count('\n')
+        plt.figtext(text_x,text_ploty,addText,size=14)
+
+    # Need cute colours
+    if is_scaling :
+        ncols = len(contour_groups)
+        ncols_dashed = len(dashed_lines)
+        # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
+        #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
+        if ncols < 2 :
+          colours_raw = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
+        else :
+          colours_raw = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
+        # Additional dashed line colours: want contrast if we're doing scaling
+        if ncols_dashed < 2 :
+          colours_dashed = [colorFader('crimson','gold',0.5)]
+        else :
+          colours_dashed = [colorFader('crimson','gold',i/(ncols-1)) for i in range(ncols)]
+        if transluscent :
+          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in colours_raw]
+          line_colours = ['black' for i in fill_colours]
+        else :
+          line_colours = colours_raw
+        line_width = 1
+    else :
+        if len(contour_groups) < 4 or use_colourscheme:
+          colours_raw = ['cornflowerblue','turquoise','mediumorchid']
+          colours_dashed = ['royalblue','darkcyan','darkorchid']
+        else :
+          from matplotlib.pyplot import cm
+          colours_raw = cm.rainbow(np.linspace(0, 1, len(contour_groups)))
+          colours_dashed = colours_raw
+        fillOpacity = 0.5
+        fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
+        line_colours = colours_raw
+        line_width = 2
+    # Going to do a colour scheme for clarity
+    for group_index, (contour_group,label_line, dashed, gradient) in enumerate(zip(contour_groups,legend_lines,dash_contour,gradient_fill)) :
+        if use_colourscheme :
+          if "dijet" in label_line or "Dijet" in label_line : icol = 0
+          elif "mono" in label_line or "Mono" in label_line : icol = 1
+          else : icol = 2
+        else :
+          icol = group_index
+        for index, contour in enumerate(contour_group) :
+          if index == 0 : uselabel = label_line
+          else : uselabel = "_"
+          if dashed :
+            #usefacecolor = 'none'
+            uselinecolor = colours_dashed[icol]
+            #uselinecolor = line_colours[icol]
+            linestyle='dashed'
+          else :
+            uselinecolor = line_colours[icol]
+            linestyle='solid'
+          if gradient :
+            im = get_gradient_fill(axes,contour,fill_colours[icol],logx,logy) # colours_raw
+            usefacecolor = 'none'
+            # Need to mess with legend with an un-plotted patch.
+            # This is hacky but whatever.
+            if index == 0 :
+              patch_forleg = Polygon([[-2,0],[-1,0],[-1,-1]], facecolor=fill_colours[icol], edgecolor=uselinecolor, label=uselabel,linewidth=line_width,linestyle=linestyle)
+              axes.add_patch(patch_forleg)
+              uselabel = "_"
+          else :
+            usefacecolor = fill_colours[icol]
+          # Drawing here
+          patch = Polygon(list(contour.exterior.coords), facecolor=usefacecolor, edgecolor=uselinecolor, zorder=2, label=uselabel,linewidth=line_width,linestyle=linestyle) 
+          axes.add_patch(patch)
+          if gradient : im.set_clip_path(patch)
+      
+    if dashed_lines :
+      for i,(newline,label) in enumerate(zip(dashed_lines,dashed_legends)) :
+        #plt.plot(newline[0],newline[1], color=dd_colours[i]) # for an actual line
+        for j,line in enumerate(newline) :
+          patch = Polygon(list(line.exterior.coords),facecolor='none',edgecolor=colours_dashed[i],label=(label if j==0 else "_"),zorder=2,linewidth=2,linestyle='dashed')
+          axes.add_patch(patch)
+
+    return
+
+def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",is_scaling=False, transluscent=False,xlow=None,xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [],gradient_fill=[],dashed_lines=[],dashed_legends=[],text_spot = 0) :
 
     # Check input
     if not dash_contour : 
@@ -249,82 +357,25 @@ def drawMassMassPlot(contour_groups, legend_lines, this_tag = "default", plot_pa
     ax.set_xlabel(r"m$_{\rm med}$ [GeV]")
     ax.set_ylabel("m$_{\chi}$ [GeV]")   
 
-    if addText :
-        text_x = 0.25 if not text_spot else text_spot[0]
-        text_y = 0.82 if not text_spot else text_spot[1]
-        text_ploty = text_y - 0.05*addText.count('\n')
-        plt.figtext(text_x,text_ploty,addText,size=14)
-
-    # Need cute colours
-    if is_scaling :
-        ncols = len(contour_groups)
-        # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
-        #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
-        if ncols < 2 :
-          colours_raw = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
-        else :
-          colours_raw = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
-        if transluscent :
-          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in colours_raw]
-          line_colours = ['black' for i in fill_colours]
-        else :
-          line_colours = colours_raw
-        line_width = 1
-    else :
-        colours_raw = ['cornflowerblue','turquoise','mediumorchid']
-        colours_dashed = ['royalblue','darkcyan','darkorchid']
-        fillOpacity = 0.5
-        fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
-        line_colours = colours_raw
-        line_width = 2
-    # Going to do a colour scheme for clarity
-    for group_index, (contour_group,label_line, dashed, gradient) in enumerate(zip(contour_groups,legend_lines,dash_contour,gradient_fill)) :
-        if use_colourscheme :
-          if "dijet" in label_line or "Dijet" in label_line : icol = 0
-          elif "mono" in label_line or "Mono" in label_line : icol = 1
-          else : icol = 2
-        else :
-          icol = group_index
-        for index, contour in enumerate(contour_group) :
-          if index == 0 : uselabel = label_line
-          else : uselabel = "_"
-          if dashed :
-            #usefacecolor = 'none'
-            uselinecolor = colours_dashed[icol]
-            #uselinecolor = line_colours[icol]
-            linestyle='dashed'
-          else :
-            uselinecolor = line_colours[icol]
-            linestyle='solid'
-          if gradient :
-            im = get_gradient_fill(ax,contour,fill_colours[icol]) # colours_raw
-            usefacecolor = 'none'
-            # Need to mess with legend with an un-plotted patch.
-            # This is hacky but whatever.
-            if index == 0 :
-              patch_forleg = Polygon([[-2,0],[-1,0],[-1,-1]], facecolor=fill_colours[icol], edgecolor=uselinecolor, label=uselabel,linewidth=line_width,linestyle=linestyle)
-              ax.add_patch(patch_forleg)
-              uselabel = "_"
-          else :
-            usefacecolor = fill_colours[icol]
-          # Drawing here
-          patch = Polygon(list(contour.exterior.coords), facecolor=usefacecolor, edgecolor=uselinecolor, zorder=2, label=uselabel,linewidth=line_width,linestyle=linestyle) 
-          ax.add_patch(patch)
-          if gradient : im.set_clip_path(patch)
+    coreDrawFunction(ax,contour_groups,legend_lines,addText,is_scaling, transluscent,xlow,xhigh, ylow,yhigh, use_colourscheme, dash_contour,gradient_fill,dashed_lines,dashed_legends,text_spot)
     ax.legend(fontsize=14,loc='upper right')
 
-    #plt.savefig(plot_path+'/massmass_{0}.eps'.format(this_tag),bbox_inches='tight')
-    plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
+    plt.savefig(plot_path+'/{0}.pdf'.format(this_tag),bbox_inches='tight')
 
     plt.close(fig)    
 
-def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots",xlabel="",ylabel="coupling", addText = "",is_scaling=False, transluscent=False,xlow=None, xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = []) :
+def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots",xlabel="",ylabel="coupling", addText = "",is_scaling=False, transluscent=False,xlow=None, xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [], gradient_fill=[],dashed_lines=[], dashed_legends=[],text_spot = 0,legend_spot='upper right') :
 
     # Check input
     if not dash_contour : 
       dash_contour = [False for i in contour_groups]
     elif len(dash_contour) != len(contour_groups) :
       print("Error: dash_contour list must have an entry for each contour!")
+      exit(1)
+    if not gradient_fill :
+      gradient_fill = [False for i in contour_groups]
+    elif len(gradient_fill) != len(contour_groups) :
+      print("Error: gradient_fill list must have an entry for each contour!")    
       exit(1)
 
     # Check output
@@ -343,8 +394,8 @@ def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plo
 
     ax.set_yscale('log') 
     plt.rc('font',size=16)
-    #ratio = get_aspect_ratio(ax)
-    #ax.set_aspect(ratio)
+    ratio = get_aspect_ratio(ax, islinearlog=True)
+    ax.set_aspect(ratio)
 
     if not xlabel :
       ax.set_xlabel(r"m$_{\rm med}$ [GeV]")
@@ -352,53 +403,22 @@ def drawCouplingMassPlot(contour_groups, legend_lines, this_tag = "default", plo
       ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)   
 
-    if addText :
-        if addText.count('\n') == 1 :
-            plt.figtext(0.23,0.77,addText,size=14)
-        elif addText.count('\n') == 2 :
-            plt.figtext(0.23,0.72,addText,size=14)
-        else : plt.figtext(0.23,0.82,addText,size=14)
+    if 'outside' in legend_spot : text_spot = [0.84, 0.83]
 
-    # Need 3 cute colours
-    if is_scaling :
-        ncols = len(contour_groups)
-        if ncols < 2 :
-          fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
-        else :
-          fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
-        if transluscent :
-          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
-          line_colours = ['black' for i in fill_colours]
-        else :
-          line_colours = fill_colours          
-        line_width = 1
+    coreDrawFunction(ax,contour_groups,legend_lines,addText,is_scaling, transluscent,xlow,xhigh, ylow,yhigh, use_colourscheme, dash_contour,gradient_fill,dashed_lines,dashed_legends,text_spot,logx=False,logy=True)
+
+    if 'outside' in legend_spot :
+      leg_y = text_spot[1]-0.05*(addText.count('\n')-2)
+      leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,leg_y),loc="upper left")
+      leg.get_frame().set_linewidth(0.0)
     else :
-        colours_raw = ['cornflowerblue','turquoise','mediumorchid']
-        fillOpacity = 0.5
-        fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
-        line_colours = colours_raw
-        line_width = 2
-    for group_index, (contour_group,label_line) in enumerate(zip(contour_groups,legend_lines)) :
-        if use_colourscheme :
-          if "dijet" in label_line : icol = 0
-          elif "mono" in label_line : icol = 1
-          else : icol = 2
-        else :
-          icol = group_index
-        for index, contour in enumerate(contour_group) :
-            if index == 0 :
-                patch = Polygon(list(contour.exterior.coords), facecolor=fill_colours[icol], edgecolor=line_colours[icol], zorder=2, label=label_line,linewidth=line_width) #alpha=fillOpacity, 
-            else :
-                patch = Polygon(list(contour.exterior.coords), facecolor=fill_colours[icol], edgecolor=line_colours[icol], zorder=2, label="_",linewidth=line_width) # alpha=fillOpacity,
-            ax.add_patch(patch)
-    ax.legend(fontsize=14,loc='upper right')
+      ax.legend(fontsize=14,loc=legend_spot)
 
-    print("Creating plot",plot_path+'/couplingmass_{0}.pdf'.format(this_tag))
-    plt.savefig(plot_path+'/couplingmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
+    plt.savefig(plot_path+'/{0}.pdf'.format(this_tag),bbox_inches='tight')
 
     plt.close(fig)        
 
-def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",ylabel="\sigma",is_scaling=False, transluscent=False, xlow=None, xhigh=None, ylow=None,yhigh=None, dd_curves = None, dd_legendlines = None) :
+def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "plots", addText = "",ylabel="\sigma",is_scaling=False, transluscent=False, xlow=None, xhigh=None, ylow=None,yhigh=None, dd_curves = None, dd_legendlines = None,dashed_lines=[], dashed_legends=[]) :
 
     # Check output
     if not os.path.exists(plot_path) :
@@ -421,53 +441,60 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
     ax.set_xlabel("m$_{\chi}$ [GeV]", fontsize=16)
     ax.set_ylabel(ylabel, fontsize=16)
 
+    text_spot = [0.84, 0.83]
+    coreDrawFunction(ax,contour_groups,legend_lines,addText,is_scaling, transluscent,xlow,xhigh, ylow,yhigh, use_colourscheme=False, dash_contour=[],gradient_fill=[],dashed_lines=dashed_lines,dashed_legends=dashed_legends,text_spot=text_spot,logx=True,logy=True)
+
+    leg_y = text_spot[1]-0.05*(addText.count('\n')-2)
+    leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,leg_y),loc="upper left")
+    leg.get_frame().set_linewidth(0.0)
+
     # Need 3+ cute colours
-    if is_scaling :
-        ncols = len(contour_groups)
-        # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
-        #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
-        if ncols < 2 :
-          fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
-        else :
-          fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
-        if transluscent :
-          fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
-          line_colours = ['black' for i in fill_colours]
-        else :
-          line_colours = fill_colours          
-        line_width = 1
-    else :
-        colours_raw = ['cornflowerblue','turquoise','mediumorchid']
-        fillOpacity = 0.5
-        fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
-        line_colours = colours_raw
-        line_width = 2
-    for contour_group,label_line,face_col,line_col in zip(contour_groups,legend_lines,fill_colours,line_colours) :
-        for index, contour in enumerate(contour_group) :
-            if len(list(contour.exterior.coords)) == 0 : continue
-            if index == 0 :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) 
-            else :
-                patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width)
-            ax.add_patch(patch)
+    # if is_scaling :
+    #     ncols = len(contour_groups)
+    #     # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
+    #     #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
+    #     if ncols < 2 :
+    #       fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
+    #     else :
+    #       fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
+    #     if transluscent :
+    #       fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
+    #       line_colours = ['black' for i in fill_colours]
+    #     else :
+    #       line_colours = fill_colours          
+    #     line_width = 1
+    # else :
+    #     colours_raw = ['cornflowerblue','turquoise','mediumorchid']
+    #     fillOpacity = 0.5
+    #     fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
+    #     line_colours = colours_raw
+    #     line_width = 2
+    # for contour_group,label_line,face_col,line_col in zip(contour_groups,legend_lines,fill_colours,line_colours) :
+    #     for index, contour in enumerate(contour_group) :
+    #         if len(list(contour.exterior.coords)) == 0 : continue
+    #         if index == 0 :
+    #             patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) 
+    #         else :
+    #             patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width)
+    #         ax.add_patch(patch)
 
     
-    if dd_curves :
-      dd_colours = ['crimson','darkorange','gold']
-      for i,(newline,label) in enumerate(zip(dd_curves,dd_legendlines)) :
-        plt.plot(newline[0],newline[1], color=dd_colours[i], label=label.replace(" ","\n"))
-      text_x = 0.84
-      text_y = 0.83-0.05*addText.count('\n')
-      leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,text_y+0.05),loc="upper left")
-      leg.get_frame().set_linewidth(0.0)
-    else :
-      ax.legend(fontsize=14,loc='upper right')
-      text_x = 0.23
-      text_y = 0.82-0.05*addText.count('\n')
+    # if dd_curves :
+    #   dd_colours = ['crimson','darkorange','gold']
+    #   for i,(newline,label) in enumerate(zip(dd_curves,dd_legendlines)) :
+    #     plt.plot(newline[0],newline[1], color=dd_colours[i], label=label.replace(" ","\n"))
+    #   text_x = 0.84
+    #   text_y = 0.83-0.05*addText.count('\n')
+    #   leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,text_y+0.05),loc="upper left")
+    #   leg.get_frame().set_linewidth(0.0)
+    # else :
+    #   ax.legend(fontsize=14,loc='upper right')
+    #   text_x = 0.23
+    #   text_y = 0.82-0.05*addText.count('\n')
 
-    if addText : plt.figtext(text_x,text_y,addText,size=14)
+    #if addText : plt.figtext(text_x,text_y,addText,size=14)
 
-    plt.savefig(plot_path+'/directdetection_{0}.pdf'.format(this_tag),bbox_inches='tight')
+    plt.savefig(plot_path+'/{0}.pdf'.format(this_tag),bbox_inches='tight')
 
     plt.close(fig)    
             

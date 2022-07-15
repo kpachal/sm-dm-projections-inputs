@@ -17,7 +17,14 @@ plotlims = {'hl-lhc' :
 }
 
 masslines = {
-  "DPLike_fixedMMed" : r"m$_{\chi}$ = m$_{\rm med}/3$",
+  "ratio2p5_fixedMMed" : r"m$_{\rm med}$ = 2.5 m$_{\chi}$",
+  "ratio3_fixedMMed" : r"m$_{\rm med}$ = 3 m$_{\chi}$",
+  "ratio5_fixedMMed" : r"m$_{\rm med}$ = 5 m$_{\chi}$",
+  "ratio10_fixedMMed" : r"m$_{\rm med}$ = 10 m$_{\chi}$",
+  "ratio100_fixedMMed" : r"m$_{\rm med}$ = 100 m$_{\chi}$",
+  "ratio1000_fixedMMed" : r"m$_{\rm med}$ = 1000 m$_{\chi}$",    
+  "mMed50GeV_fixedMMed" : r"m$_{\rm med}$ = 50 GeV",
+  "mMed1000GeV_fixedMMed" : r"m$_{\rm med}$ = 1000 GeV"  
 }
 ylabels = {
     "gl_lim" : r"g$_{l}$",

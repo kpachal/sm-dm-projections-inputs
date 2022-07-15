@@ -19,7 +19,11 @@ plotlims = {'hl-lhc' :
 masslines = {
   "dmDecoupled" : "m$_{\chi}$ = 100 TeV",
   "DPLike" : r"m$_{\chi}$ = m$_{\rm med}/3$",
-  "dmLight" : "m$_{\chi}$ = 1 GeV",
+  "dm1GeV" : "m$_{\chi}$ = 1 GeV",
+  "dm10MeV" : "m$_{\chi}$ = 10 MeV",
+  "dm100MeV" : "m$_{\chi}$ = 100 MeV",
+  "dm10GeV" : "m$_{\chi}$ = 10 GeV",
+  "dm100GeV" : "m$_{\chi}$ = 100 GeV",
 }
 ylabels = {
     "gl_lim" : r"g$_{l}$",
@@ -140,7 +144,7 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                     contours_list_dijet = {}
                     contours_list_monojet = {}
                     contours_list_dilepton = {}
-                    hypotheses_simple = ["dmDecoupled","DPLike","dmLight"]
+                    hypotheses_simple = masslines.keys()
                     for dmhypothesis in hypotheses_simple :
                         analysis_list = dict_bycoupling[couplingscan][dmhypothesis][coupling_set]
                         if "dijet" in analysis_list.keys() : contours_list_dijet[dmhypothesis] = analysis_list["dijet"]

@@ -10,10 +10,20 @@ import collect_dd
 
 # Define an option for each here
 def test_mass_scenarios(scenario,mymdm) : 
-  if scenario == "DPLike_fixedMMed" : return 3*mymdm
+  if scenario == "ratio2p5_fixedMMed" : return 2.5*mymdm
+  elif scenario == "ratio3_fixedMMed" : return 3.*mymdm
+  elif scenario == "ratio5_fixedMMed" : return 5.*mymdm
+  elif scenario == "ratio10_fixedMMed" : return 10.*mymdm
+  elif scenario == "ratio100_fixedMMed" : return 100.*mymdm
+  elif scenario == "ratio1000_fixedMMed" : return 1000.*mymdm
 
 masslines = {
-  "DPLike" : r"m$_{\chi}$ = m$_{\rm med}/3$",
+  "ratio2p5" : r"m$_{\rm med}$ = 2.5 m$_{\chi}$",
+  "ratio3" : r"m$_{\rm med}$ = 3 m$_{\chi}$",
+  "ratio5" : r"m$_{\rm med}$ = 5 m$_{\chi}$",
+  "ratio10" : r"m$_{\rm med}$ = 10 m$_{\chi}$",
+  "ratio100" : r"m$_{\rm med}$ = 100 m$_{\chi}$",
+  "ratio1000" : r"m$_{\rm med}$ = 1000 m$_{\chi}$"
 }
 
 sd_proton = collect_dd.get_sd_proton()
@@ -49,6 +59,8 @@ def calculate_si(gq, gdm, gl, mMed, mdm) :
 
     mn = 0.939 # GeV
     val = 6.9e-41 * (gq*gdm/0.25)**2 * (1000./mMed)**4 * (mn*mdm/(mn+mdm))**2
+    #print("gq, gdm, gl, mMed, mdm = ",gq,gdm,gl,mMed,mdm)
+    #print("  val =",val)
     return val
 
 def interpolate_vertical(x1,y1,x2,y2,n) :
@@ -108,13 +120,13 @@ def make_plots(collider, model, contours, legend_lines, fix_couplings, couplings
 for collider in ['hl-lhc', 'fcc-hh'] : 
     for model in ['vector','axial'] :        
         ylabel = "$\sigma_{SD}$" if 'axial' in model else "$\sigma_{SI}$"
-        ylabel = ylabel + " ($\chi$-nucleon) [cm$^2$]" # No difference between proton & neutron for SD unless comparing to other limits        
+        ylabel = ylabel + " ($\chi$-nucleon) [cm$^2$]" # No difference between proton & neutron for SD unless comparing to other limits  
+        exclusions_dd = {}      
         with open('{0}_exclusion_contours_couplingDMmass_{1}.pkl'.format(model,collider), "rb") as poly_file:
             loaded_polygons = pickle.load(poly_file)
 
             # Make new dict re-sorted by what coupling the limit is with respect to
             # and convert the contours to DD curves.
-            exclusions_dd = {}
             for signature in ['dijet','monojet','dilepton'] :
                 signature_contours = loaded_polygons[signature]
                 for key,exclusions in signature_contours.items() :
@@ -140,6 +152,7 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                         for (x, y) in use_vertices :
                             mdm = x
                             mmed = test_mass_scenarios(dmhypothesis,mdm)
+                            #print("Got mmed=",mmed,"for mdm",mdm, "hypothesis",dmhypothesis)
                             if "gq" in couplingscan :
                                 gq = y
                                 gdm = eval(tokens[6].replace("gdm","")) if "gdm" in tokens[6] else eval(tokens[7].replace("gdm",""))
@@ -180,16 +193,12 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                     for coupling_set, analysis_list in exclusions_dd[couplingscan][dmhypothesis].items() :
                         if not coupling_set in all_couplingsets : all_couplingsets.append(coupling_set)
                         # First set of plots: all analyses contributing to a particular limit scenario
-                        #couplings_separate = coupling_set.split("_")
-                        #tag = "{0}_{1}_{2}_{3}".format(model,couplingscan,dmhypothesis.split("_")[0],coupling_set)
-                        #label_line =  "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),masslines[dmhypothesis],transform_coupling(couplings_separate[0]),transform_coupling(couplings_separate[1]))
                         legend_lines = []
                         contours_list = []
                         for name, contours in analysis_list.items() :
                             if contours : 
                                 legend_lines.append(name)
                                 contours_list.append(contours)
-                        #drawDDPlot(contours_list, legend_lines, this_tag = tag, plot_path = "plots/directdetection/"+collider, addText = label_line,ylabel=ylabel,is_scaling=True, transluscent=True,xhigh=xhigh, ylow=ylow, yhigh=yhigh)
                         make_plots(collider, model, contours_list, legend_lines, coupling_set, couplingscan, dmhypothesis.split("_")[0])
             
                     # No need for multiple hypotheses on one plot here: we have only one, so let's just do it.
@@ -200,6 +209,8 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                     contours_list_merged = {}
                     for coupling_set in all_couplingsets :
                         couplings_separate = coupling_set.split("_")
+                        if coupling_set not in exclusions_dd[couplingscan][dmhypothesis].keys ():
+                            continue
                         analysis_list = exclusions_dd[couplingscan][dmhypothesis][coupling_set]
                         merge_list = []
 
@@ -227,13 +238,15 @@ for collider in ['hl-lhc', 'fcc-hh'] :
                         for fixedcoupling in dictionary.keys():
                             legend_lines = []
                             overlays = []
-                            #tag = "{0}_{1}_{2}_{3}_{4}".format(model,couplingscan,dmhypothesis, fixedcoupling, analysis)
                             ordered_couplings = list(dictionary[fixedcoupling].keys())
                             ordered_couplings.sort(reverse=True)
                             for variedcoupling in ordered_couplings :
                                 contour = dictionary[fixedcoupling][variedcoupling]
                                 overlays.append(contour)
                                 legend_lines.append(get_legend_line(variedcoupling))
-                            #label_line = "{0}\n{1}, {2}\n{3}, {4}".format(("Axial-vector" if 'axial' in model else "Vector"),collider.upper(),analysis.capitalize(),masslines[dmhypothesis], transform_coupling(fixedcoupling))
-                            #drawDDPlot(overlays, legend_lines, this_tag = tag, plot_path = "plots/directdetection/"+collider, addText = label_line,ylabel=ylabel,is_scaling=True, transluscent=True,xhigh=xhigh, ylow=ylow, yhigh=yhigh)
                             make_plots(collider, model, overlays, legend_lines, fixedcoupling, couplingscan, dmhypothesis.split("_")[0], extra_tag = analysis)
+
+            
+        # Save contours for reuse
+        with open("{0}_DD_contours_fixedMassRatio_{1}.pkl".format(model,collider), "wb") as poly_file:
+            pickle.dump(exclusions_dd, poly_file, pickle.HIGHEST_PROTOCOL)    
