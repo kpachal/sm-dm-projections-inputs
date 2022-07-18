@@ -262,8 +262,8 @@ for collider in ['hl-lhc', 'fcc-hh'] :
         # Only care right now about gq integrated out of x axis and gl = 0.
         relevant_limits = loaded_polygons['gq_lim']
         for dmhypothesis_long in relevant_limits.keys() :
+            dmhypothesis = dmhypothesis_long.split("_")[0]
             for couplingset, lims in relevant_limits[dmhypothesis_long].items() :
-                dmhypothesis = dmhypothesis_long.split("_")[0]
                 if not "gl0.0" in couplingset : continue
                 gdm = couplingset.split("_")[0]
                 for signature in ['dijet','monojet','dilepton'] :
@@ -282,6 +282,7 @@ for collider in ['hl-lhc', 'fcc-hh'] :
 # No overlapping signatures here,
 # and only care about monojet right now.
 xlabel = r"m$_{\rm med}$ [GeV]"
+set_of_couplings = []
 for dmhypothesis, contour_set in dict_dd_bycoupling["monojet"].items() :
     contours_solid = []
     contours_dashed = []
@@ -289,22 +290,88 @@ for dmhypothesis, contour_set in dict_dd_bycoupling["monojet"].items() :
     legend_lines_dashed = []
     for gdm,contour in contour_set["hl-lhc"].items() :
         contours_dashed.append(contour)
-        legend_lines_dashed.append(get_couplingmass_legend_line(gdm)+", FCC-hh")
+        legend_lines_dashed.append(get_couplingmass_legend_line(gdm)+", HL-LHC")
+        if not gdm in set_of_couplings : set_of_couplings.append(gdm)
     for gdm,contour in contour_set["fcc-hh"].items() :
         contours_solid.append(contour)
-        legend_lines_solid.append(get_couplingmass_legend_line(gdm)+", HL-LHC")
+        legend_lines_solid.append(get_couplingmass_legend_line(gdm)+", FCC-hh")
+        if not gdm in set_of_couplings : set_of_couplings.append(gdm)
     use_ylabel = "$\sigma_{SI}$ ($\chi$-nucleon) [cm$^2$]"
-    tag_line = "{0}_{1}_gdm1.0_gl0.0_compareColliders".format("vector",dmhypothesis)
+    tag_line = "{0}_{1}_gl0.0_compareColliders".format("vector",dmhypothesis)
     label_line_ddcompare="Vector, Monojet\n{0}, {1}".format(masslines[dmhypothesis], transform_coupling("gl0.0"))    
-    drawDDPlot(contours_solid,legend_lines_solid, this_tag = tag_line, plot_path = "plots/efreport/", addText = label_line, ylabel=use_ylabel, is_scaling=True, transluscent=True, xhigh=4000, ylow=1e-50, yhigh=1e-37,dashed_lines=contours_dashed, dashed_legends=legend_lines_dashed)
+    drawDDPlot(contours_solid,legend_lines_solid, this_tag = tag_line, plot_path = "plots/efreport/", addText = label_line_ddcompare, ylabel=use_ylabel, is_scaling=True, transluscent=True, xhigh=4000, ylow=1e-50, yhigh=1e-37,dashed_lines=contours_dashed, dashed_legends=legend_lines_dashed)
+
+# Second version: all angles on one plot for a given coupling.
+for gdm in set_of_couplings :
+    if gdm=="gdm0.0" : continue
+    contours_solid = []
+    contours_dashed = []
+    legend_lines_solid = []
+    legend_lines_dashed = []
+    for dmhypothesis, contour_set in dict_dd_bycoupling["monojet"].items() :
+        if gdm in contour_set["hl-lhc"].keys() :
+            contours_dashed.append(contour_set["hl-lhc"][gdm])
+            legend_lines_dashed.append(masslines[dmhypothesis]+", HL-LHC")
+        if gdm in contour_set["fcc-hh"].keys() :
+            contours_solid.append(contour_set["fcc-hh"][gdm])
+            legend_lines_solid.append(masslines[dmhypothesis]+", FCC-hh")
+    use_ylabel = "$\sigma_{SI}$ ($\chi$-nucleon) [cm$^2$]"
+    tag_line = "vector_{0}_gl0.0_compareColliders".format(gdm)
+    label_line_ddcompare="Vector, Monojet\n{0}, {1}".format(transform_coupling(gdm), transform_coupling("gl0.0"))
+    drawDDPlot(contours_solid,legend_lines_solid, this_tag = tag_line, plot_path = "plots/efreport/", addText = label_line_ddcompare, ylabel=use_ylabel, is_scaling=True, transluscent=True, xhigh=4000, ylow=1e-50, yhigh=1e-37,dashed_lines=contours_dashed, dashed_legends=legend_lines_dashed)
+
+    
 
 #####################
 # Figures: coupling limit versus mA/mchi
 # Curves should already be in dict_couplingmass_bycoupling.
-print(dict_couplingmass_bycoupling)
+
+# Rearrange so that we have this grouped by analysis, then other couplings, then collider, then hypothesis.
+dict_couplingmass_byhypothesis = {}
+for hypothesis,dicti in dict_couplingmass_bycoupling["gdm_lim"].items() :
+    for collider, dictj in dicti.items() :
+        for couplingset,dictk in dictj.items() :
+            for analysis,contours in dictk.items() :
+                if not analysis in dict_couplingmass_byhypothesis.keys() :
+                    dict_couplingmass_byhypothesis[analysis] = {}
+                if not couplingset in dict_couplingmass_byhypothesis[analysis].keys() :
+                    dict_couplingmass_byhypothesis[analysis][couplingset] = {}
+                if not collider in dict_couplingmass_byhypothesis[analysis][couplingset].keys() :
+                    dict_couplingmass_byhypothesis[analysis][couplingset][collider] = {}
+                dict_couplingmass_byhypothesis[analysis][couplingset][collider][hypothesis] = contours
 
 # Version 1: just do g_DM^2 y axis for validation.
+print(dict_couplingmass_byhypothesis)
+test_mdm_list = ["dm1GeV","dm10GeV","dm100GeV"]
+xlabel = r"m$_{\rm med}$/m$_{\chi}$"
+root_tests = []
+for analysis, dicta in dict_couplingmass_byhypothesis.items() :
+    if "monojet" not in analysis : continue
+    for couplingset, dictb in dicta.items() :
+        for collider, dictc in dictb.items() :
+            legendlines = []
+            contour_collection = []
 
-
+            for hypothesis in test_mdm_list :
+                if hypothesis not in dictc.keys() :
+                    continue
+                original_contours = dictc[hypothesis]
+                converted_contours = []
+                mdm = eval(hypothesis.replace("dm","").replace("GeV",""))
+                for contour in original_contours :
+                    original_vertices = list(contour.exterior.coords)
+                    new_vertices = []
+                    for (x, y) in original_vertices :
+                        gdm_2 = y**2
+                        xratio = x/mdm
+                        #print(xratio,gdm_2)
+                        new_vertices.append((xratio,gdm_2))
+                    new_contour = shapely_pol(new_vertices)
+                    converted_contours.append(new_contour)
+                contour_collection.append(converted_contours)
+                legend_lines.append(hypothesis)
+            tag_line = "newplot_{0}_{1}_{2}".format(analysis,couplingset,collider)
+            label_line_new="Vector, {0}\n{0}, {1}".format(analysis.capitalize(),couplingset, collider)   
+            drawDDPlot(contour_collection,legendlines, this_tag = tag_line, plot_path = "plots/efreport/", addText = label_line_new, ylabel=r"g$_{DM}^{2}$", is_scaling=True, transluscent=True, xhigh=1000, ylow=0.0001, yhigh=1)
 
 # Version 2: convert to "y" variable using Phil's formula.

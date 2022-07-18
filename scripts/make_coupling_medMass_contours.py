@@ -20,19 +20,19 @@ plot_path = "plots/validation"
 # based on explicitly what we are trying to target
 test_coupling_scenarios = {
   "gq_lim" : {
-    "test_gq" : np.logspace(np.log10(0.001),0,101),
+    "test_gq" : np.logspace(np.log10(0.0001),0,101),
     "test_gdm" : [0.0, 0.05, 0.1, 0.2, 1.0],
     "test_gl" : [0.0],
   },
   "gdm_lim" : {
     "test_gq" : [0.01, 0.02, 0.05, 0.1, 0.25],
-    "test_gdm" : np.logspace(np.log10(0.001),0,101),
+    "test_gdm" : np.logspace(np.log10(0.0001),0,101),
     "test_gl" : [0.0]
   },
   "gl_lim" : {
     "test_gq" : [0.01, 0.1, 0.25],
     "test_gdm" : [0.0, 1.0],
-    "test_gl" : np.logspace(np.log10(0.001),0,101),
+    "test_gl" : np.logspace(np.log10(0.0001),0,101),
   }
 }
 
@@ -143,9 +143,18 @@ for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
   
   else :
     monojet_data_vec = np.load(input_path+'/{0}/monojet/{0}-monojet_vector.npz'.format(collider))
-    monojet_mmed_vec = monojet_data['xvals']
-    monojet_mdm_vec = monojet_data['yvals']
-    monojet_exdepth_V1 = monojet_data['zvals']
+    monojet_mmed_vec = monojet_data_vec['xvals']
+    monojet_mdm_vec = monojet_data_vec['yvals']
+    monojet_exdepth_V1 = monojet_data_vec['zvals']
+  
+  # Mirror monojet here, since it doesn't actually go all the way to the axis.
+  # New
+  use_mmed_mono = np.concatenate((monojet_mmed_vec,monojet_mmed_vec))
+  use_mdm_mono = np.concatenate((monojet_mdm_vec,-1.0*monojet_mdm_vec))
+  use_exdepth_mono = np.concatenate((monojet_exdepth_V1,monojet_exdepth_V1))
+  monojet_mmed_vec = use_mmed_mono
+  monojet_mdm_vec = use_mdm_mono
+  monojet_exdepth_V1 = use_exdepth_mono
 
   # Storage
   monojet_contours_axial = {}

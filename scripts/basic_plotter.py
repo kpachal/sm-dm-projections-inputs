@@ -448,52 +448,6 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
     leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,leg_y),loc="upper left")
     leg.get_frame().set_linewidth(0.0)
 
-    # Need 3+ cute colours
-    # if is_scaling :
-    #     ncols = len(contour_groups)
-    #     # old version: all blues. Great for overlaid but hard to tell apart if transluscent.
-    #     #fill_colours = [scale_lightness('cornflowerblue',0.5+i/(ncols-1) for i in range(ncols)]
-    #     if ncols < 2 :
-    #       fill_colours = [colorFader('cornflowerblue','turquoise',0.5)] # other good option: 'lightgreen'
-    #     else :
-    #       fill_colours = [colorFader('cornflowerblue','turquoise',i/(ncols-1)) for i in range(ncols)]
-    #     if transluscent :
-    #       fill_colours = [ColorConverter.to_rgba(col, alpha=0.5) for col in fill_colours]
-    #       line_colours = ['black' for i in fill_colours]
-    #     else :
-    #       line_colours = fill_colours          
-    #     line_width = 1
-    # else :
-    #     colours_raw = ['cornflowerblue','turquoise','mediumorchid']
-    #     fillOpacity = 0.5
-    #     fill_colours = [ColorConverter.to_rgba(col, alpha=fillOpacity) for col in colours_raw]
-    #     line_colours = colours_raw
-    #     line_width = 2
-    # for contour_group,label_line,face_col,line_col in zip(contour_groups,legend_lines,fill_colours,line_colours) :
-    #     for index, contour in enumerate(contour_group) :
-    #         if len(list(contour.exterior.coords)) == 0 : continue
-    #         if index == 0 :
-    #             patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label=label_line,linewidth=line_width) 
-    #         else :
-    #             patch = Polygon(list(contour.exterior.coords), facecolor=face_col, edgecolor=line_col, zorder=2, label="_",linewidth=line_width)
-    #         ax.add_patch(patch)
-
-    
-    # if dd_curves :
-    #   dd_colours = ['crimson','darkorange','gold']
-    #   for i,(newline,label) in enumerate(zip(dd_curves,dd_legendlines)) :
-    #     plt.plot(newline[0],newline[1], color=dd_colours[i], label=label.replace(" ","\n"))
-    #   text_x = 0.84
-    #   text_y = 0.83-0.05*addText.count('\n')
-    #   leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,text_y+0.05),loc="upper left")
-    #   leg.get_frame().set_linewidth(0.0)
-    # else :
-    #   ax.legend(fontsize=14,loc='upper right')
-    #   text_x = 0.23
-    #   text_y = 0.82-0.05*addText.count('\n')
-
-    #if addText : plt.figtext(text_x,text_y,addText,size=14)
-
     plt.savefig(plot_path+'/{0}.pdf'.format(this_tag),bbox_inches='tight')
 
     plt.close(fig)    
