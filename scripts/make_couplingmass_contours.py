@@ -36,22 +36,6 @@ test_coupling_scenarios = {
   }
 }
 
-# Should be able to use this for everything
-mDM_test = np.linspace(0,2000,501)
-mDM_test[0] = 1.0
-test_mass_scenarios = {
-  "ratio2p5_fixedMMed" : [i*2.5 for i in mDM_test],
-  "ratio3_fixedMMed" : [i*3.0 for i in mDM_test],
-  "ratio5_fixedMMed" : [i*5.0 for i in mDM_test],
-  "ratio10_fixedMMed" : [i*10.0 for i in mDM_test],
-#  "mMed50GeV_fixedMMed" : [50.0 for i in mDM_test],
-#  "mMed1000GeV_fixedMMed" : [1000.0 for i in mDM_test]
-  "ratio100_fixedMMed" : [i*100.0 for i in mDM_test],
-  "ratio1000_fixedMMed" : [i*1000.0 for i in mDM_test],
-}
-
-plotlims = {'hl-lhc' : 2200, 'fcc-hh' : 2200}
-
 # Begin main code
 ####################
 
@@ -64,8 +48,44 @@ def clean_grid(xvals, yvals, zvals) :
   zclean = zvals[np.logical_and(np.logical_and(np.isfinite(xvals),np.isfinite(yvals)),np.isfinite(zvals))]
   return xclean, yclean, zclean
 
+plotlims = {"mDM" : {'hl-lhc' : 2200, 'fcc-hh' : 2200},
+            "MMed" : {'hl-lhc' : 7500, 'fcc-hh' : 15000}}
+
 # Now process everything
-for xaxis in ["mDM, mMed"] :
+for xaxis in ["mDM", "MMed"] :
+
+  # Axis ranges and scanned ratios vary with which
+  # item is being scanned.
+  xmax = 5000 if "mDM" in xaxis else 15000
+  m_x_test = np.linspace(0,xmax,1001)
+  m_x_test[0] = 1.0
+
+  test_mass_scenarios = { 
+    # x axis is mDM: MMed should be a multiple of it (or fixed)
+    "mDM" :
+    {
+      "ratio2p5_fixedMMed" : [i*2.5 for i in m_x_test],
+      "ratio3_fixedMMed" : [i*3.0 for i in m_x_test],
+      "ratio5_fixedMMed" : [i*5.0 for i in m_x_test],
+      "ratio10_fixedMMed" : [i*10.0 for i in m_x_test],
+      "ratio100_fixedMMed" : [i*100.0 for i in m_x_test],
+      "ratio1000_fixedMMed" : [i*1000.0 for i in m_x_test],
+    #  "mMed50GeV_fixedMMed" : [50.0 for i in mDM_test],
+    #  "mMed1000GeV_fixedMMed" : [1000.0 for i in mDM_test]      
+    },
+    # x axis is MMed: mDM should be a fraction of it (or fixed, incl. decoupled)
+    "MMed" :
+    {
+      "dmDecoupled" : [100000 for i in m_x_test],
+      "dm1GeV" : [1.0 for i in m_x_test],
+      "DPLike" : [i/3.0 for i in m_x_test],
+      "dm10MeV" : [0.01 for i in m_x_test],
+      "dm100MeV" : [0.1 for i in m_x_test],
+      "dm10GeV" : [10.0 for i in m_x_test],
+      "dm100GeV" : [100.0 for i in m_x_test]
+    }    
+  }
+
   for collider in ["hl-lhc","fcc-hh"] : # hl-lhc done already.
 
     print(collider)
@@ -80,7 +100,7 @@ for xaxis in ["mDM, mMed"] :
     monojet_exdepth_A1 = monojet_data['zvals']
     # Already a grid, so can go straight to equivalent scan with this one.
     # Make a rescaler so we can get the V in one go.
-    monojet_scan_A1 = DMAxialModelScan(mmed=monojet_mmed, mdm=monojet_mdm,
+    monojet_scan_A1 = DMAxialModelScan(mmed=monojet_mmed_ax, mdm=monojet_mdm_ax,
       gq=0.25, gdm=1.0, gl=0.0)
     rescaler_fromA1_monojetgrid = Rescaler(monojet_scan_A1, monojet_exdepth_A1, 0.5)
 
@@ -137,7 +157,9 @@ for xaxis in ["mDM, mMed"] :
       # Recall we only want to convert mono-x limits between models once, since it's slow.
       # So we'll go to V1 and then get other vector models from there.
       # Scans and rescaler we'll use in monojet
-      V1_scan_monojetgrid = DMVectorModelScan(mmed=monojet_mmed, mdm=monojet_mdm,gq=0.25, gdm=1.0, gl=0.0)
+      monojet_mmed_vec = monojet_mmed_ax
+      monojet_mdm_vec = monojet_mdm_ax
+      V1_scan_monojetgrid = DMVectorModelScan(mmed=monojet_mmed_vec, mdm=monojet_mdm_vec,gq=0.25, gdm=1.0, gl=0.0)
       monojet_exdepth_V1 = rescaler_fromA1_monojetgrid.rescale_by_hadronic_xsec_monox(0.25, 1.0, 0.0,'vector')[(0.25,1.0,0.0)]
       # TEST ONLY
       #monojet_exdepth_V1 = rescaler_fromA1_monojetgrid.rescale_by_parton_level_xsec_monox(0.25, 1.0, 0.0,'vector')[(0.25,1.0,0.0)]
@@ -167,30 +189,35 @@ for xaxis in ["mDM, mMed"] :
     dilepton_contours_vector = {}
 
     # Now we're going to loop over our scenarios, going straight to contours and plots.
-    for hypothesis, test_masses in test_mass_scenarios.items() :
+    for hypothesis, test_masses in test_mass_scenarios[xaxis].items() :
 
-      # For dijet and dilepton
-      line_scan_A2 = DMAxialModelScan(
-        mmed=test_masses,
-        mdm=mDM_test,
-        gq=0.1,
-        gdm=1.0,
-        gl=0.01
-      )
+      # For dijet and dilepton.
+      if "mDM" in xaxis :
+        line_scan_A2 = DMAxialModelScan(
+          mmed=test_masses,
+          mdm=m_x_test,
+          gq=0.1, gdm=1.0, gl=0.01)
+      else :
+        line_scan_A2 = DMAxialModelScan(
+          mmed=m_x_test,
+          mdm=test_masses,
+          gq=0.1, gdm=1.0, gl=0.01)
       initial_depths_dijet = dijet_xsec_limit.extract_exclusion_depths(line_scan_A2)
       rescaler_fromA2_dijet = Rescaler(line_scan_A2,initial_depths_dijet,0.12)
       if "hl-lhc" in collider :
         initial_depths_dilepton = dilepton_xsec_limit.extract_exclusion_depths(line_scan_A2)
       else :
-        initial_depths_dilepton = np.array([np.nan for i in test_masses])
+        if "mDM" in xaxis : initial_depths_dilepton = np.array([np.nan for i in test_masses])
+        else : initial_depths_dilepton = np.array([np.nan for i in m_x_test])
       rescaler_fromA2_dilepton = Rescaler(line_scan_A2,initial_depths_dilepton,0.1)
 
       # For monojet: interpolate from existing limit grid (separate A and V)
-      line_scan_A1 = DMAxialModelScan(mmed=test_masses,mdm=mDM_test,gq=0.25,gdm=1.0,gl=0.0)
-      initial_depths_axial_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_A1, (test_masses,mDM_test))
+      (use_monojetx, use_monojety) = (test_masses, m_x_test) if "mDM" in xaxis else (m_x_test, test_masses)
+      line_scan_A1 = DMAxialModelScan(mmed=use_monojetx,mdm=use_monojety,gq=0.25,gdm=1.0,gl=0.0)
+      initial_depths_axial_monojet = interpolate.griddata((monojet_mmed_ax,monojet_mdm_ax), monojet_exdepth_A1, (use_monojetx,use_monojety))
       rescaler_fromA1_monojet = Rescaler(line_scan_A1, initial_depths_axial_monojet,0.4)
-      line_scan_V1 = DMVectorModelScan(mmed=test_masses,mdm=mDM_test,gq=0.25,gdm=1.0,gl=0.0)
-      initial_depths_vector_monojet = interpolate.griddata((monojet_mmed,monojet_mdm), monojet_exdepth_V1, (test_masses,mDM_test))
+      line_scan_V1 = DMVectorModelScan(mmed=use_monojetx,mdm=use_monojety,gq=0.25,gdm=1.0,gl=0.0)
+      initial_depths_vector_monojet = interpolate.griddata((monojet_mmed_vec,monojet_mdm_vec), monojet_exdepth_V1, (use_monojetx,use_monojety))
       rescaler_fromV1_monojet = Rescaler(line_scan_V1, initial_depths_vector_monojet,0.4)
 
       for test_coupling, coupling_dict in test_coupling_scenarios.items() :
@@ -215,7 +242,7 @@ for xaxis in ["mDM, mMed"] :
           other_first, other_second = np.meshgrid(test_gq, test_gdm)
           others_tag = "gq{0}_gdm{1}"
 
-        limitplot_x, limitplot_y = np.meshgrid(mDM_test,test_couplings)
+        limitplot_x, limitplot_y = np.meshgrid(m_x_test,test_couplings)
         full_limits_dijet_axial = rescaler_fromA2_dijet.rescale_by_br_quarks(test_gq, test_gdm, test_gl,'axial')
         full_limits_dijet_vector = rescaler_fromA2_dijet.rescale_by_br_quarks(test_gq, test_gdm, test_gl,'vector')
         full_limits_dilepton_axial = rescaler_fromA2_dilepton.rescale_by_br_leptons(test_gq, test_gdm, test_gl,'axial')
@@ -247,38 +274,38 @@ for xaxis in ["mDM, mMed"] :
           thiskey = collider+"_axial_{0}_{1}_".format(test_coupling,hypothesis)+others_tag.format(other_one, other_two)
 
           xdij_ax, ydij_ax, zdij_ax = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_dij_ax).flatten())
-          drawContourPlotRough([[xdij_ax, ydij_ax, zdij_ax]], addPoints = False, this_tag = thiskey+"_dijet",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xdij_ax, ydij_ax, zdij_ax]], addPoints = False, this_tag = thiskey+"_dijet",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           dijet_contours_axial[thiskey] = get_contours(xdij_ax, ydij_ax, zdij_ax)[0]
 
           xmono_ax, ymono_ax, zmono_ax = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_mono_ax).flatten())
-          drawContourPlotRough([[xmono_ax, ymono_ax, zmono_ax]], addPoints = False, this_tag = thiskey+"_monojet",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xmono_ax, ymono_ax, zmono_ax]], addPoints = False, this_tag = thiskey+"_monojet",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           monojet_contours_axial[thiskey] = get_contours(xmono_ax, ymono_ax, zmono_ax)[0]
 
           xdil_ax, ydil_ax, zdil_ax = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_dil_ax).flatten())
-          drawContourPlotRough([[xdil_ax, ydil_ax, zdil_ax]], addPoints = False, this_tag = thiskey+"_dilepton",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xdil_ax, ydil_ax, zdil_ax]], addPoints = False, this_tag = thiskey+"_dilepton",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           dilepton_contours_axial[thiskey] = get_contours(xdil_ax, ydil_ax, zdil_ax)[0]
 
           thiskey = collider+"_vector_{0}_{1}_".format(test_coupling,hypothesis)+others_tag.format(other_one, other_two)
 
           xdij_vec, ydij_vec, zdij_vec = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_dij_vec).flatten())
-          drawContourPlotRough([[xdij_vec, ydij_vec, zdij_vec]], addPoints = False, this_tag = thiskey+"_dijet",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xdij_vec, ydij_vec, zdij_vec]], addPoints = False, this_tag = thiskey+"_dijet",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           dijet_contours_vector[thiskey] = get_contours(xdij_vec, ydij_vec, zdij_vec)[0]
 
           xmono_vec, ymono_vec, zmono_vec = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_mono_vec).flatten())
-          drawContourPlotRough([[xmono_vec, ymono_vec, zmono_vec]], addPoints = False, this_tag = thiskey+"_monojet",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xmono_vec, ymono_vec, zmono_vec]], addPoints = False, this_tag = thiskey+"_monojet",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           monojet_contours_vector[thiskey] = get_contours(xmono_vec, ymono_vec, zmono_vec)[0]
 
           xdil_vec, ydil_vec, zdil_vec = clean_grid(limitplot_x.flatten(), limitplot_y.flatten(), np.array(these_depths_dil_vec).flatten())
-          drawContourPlotRough([[xdil_vec, ydil_vec, zdil_vec]], addPoints = False, this_tag = thiskey+"_dilepton",plot_path = plot_path, xhigh=plotlims[collider],yhigh=0.5,vsCoupling=True)
+          drawContourPlotRough([[xdil_vec, ydil_vec, zdil_vec]], addPoints = False, this_tag = thiskey+"_dilepton",plot_path = plot_path, xhigh=plotlims[xaxis][collider],yhigh=0.5,vsCoupling=True)
           dilepton_contours_vector[thiskey] = get_contours(xdil_vec, ydil_vec, zdil_vec)[0]
 
     # Save output in a clean way so that paper plot making script can be separate without re-running
-    with open("vector_exclusion_contours_couplingDMmass_{0}.pkl".format(collider), "wb") as poly_file:
+    with open("vector_exclusion_contours_coupling{0}_{1}.pkl".format(xaxis,collider), "wb") as poly_file:
       out_dict = {"dijet" : dijet_contours_vector,
                   "monojet" : monojet_contours_vector,
                   "dilepton" : dilepton_contours_vector}
       pickle.dump(out_dict, poly_file, pickle.HIGHEST_PROTOCOL)    
-    with open("axial_exclusion_contours_couplingDMmass_{0}.pkl".format(collider), "wb") as poly_file:
+    with open("axial_exclusion_contours_coupling{0}_{1}.pkl".format(xaxis,collider), "wb") as poly_file:
       out_dict = {"dijet" : dijet_contours_axial,
                   "monojet" : monojet_contours_axial,
                   "dilepton" : dilepton_contours_axial}
@@ -294,7 +321,8 @@ for xaxis in ["mDM, mMed"] :
                   "dilepton" : dilepton_contours_axial}
     }
     for model, middict in big_ol_dict.items() :
-      outfile = ROOT.TFile.Open("{0}_exclusion_contours_couplingDMmass_{1}.root".format(model,collider), "RECREATE")
+      outfilename = "{0}_exclusion_contours_coupling{1}_{2}.root".format(model,xaxis,collider)
+      outfile = ROOT.TFile.Open(outfilename, "RECREATE")
       outfile.cd()    
       for analysis, smalldict in middict.items() :
         for key, contour in smalldict.items() :
