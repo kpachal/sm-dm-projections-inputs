@@ -55,7 +55,8 @@ def get_legend_line(couplingstring) :
 for collider in ['hl-lhc', 'fcc-hh'] :
     for model in ['vector','axial'] :
         print("Starting model",model)
-        with open('{0}_exclusion_contours_couplingDMmass_{1}.pkl'.format(model,collider), "rb") as poly_file:
+        #with open('{0}_exclusion_contours_couplingDMmass_{1}.pkl'.format(model,collider), "rb") as poly_file:
+        with open('{0}_exclusion_contours_couplingmDM_{1}.pkl'.format(model,collider), "rb") as poly_file:
             loaded_polygons = pickle.load(poly_file)
 
             # Make new dict re-sorted by what coupling the limit is with respect to

@@ -105,7 +105,7 @@ for collider in ['hl-lhc', 'fcc-hh'] :
         key_couplings = fig2_couplings[versus]
         gs,vals = list(key_couplings.keys()),list(key_couplings.values())
         key = "{0}_vector_{1}_lim_{6}_{2}{3}_{4}{5}".format(collider,versus,gs[0],vals[0],gs[1],vals[1],dmhypothesis)
-        with open('vector_exclusion_contours_couplingmass_{0}.pkl'.format(collider), "rb") as poly_file:
+        with open('vector_exclusion_contours_couplingMMed_{0}.pkl'.format(collider), "rb") as poly_file:
             loaded_polygons = pickle.load(poly_file)
             for signature in ['dilepton','dijet','monojet'] :
                 if key in loaded_polygons[signature].keys() :
@@ -177,7 +177,7 @@ drawCouplingMassPlot(plot_contours_2c, legend_lines, this_tag = "vector_coupling
 dict_couplingmass_bycoupling = {}
 all_couplingsets = []
 for collider in ['hl-lhc', 'fcc-hh'] :
-    with open('vector_exclusion_contours_couplingmass_{0}.pkl'.format(collider), "rb") as poly_file:
+    with open('vector_exclusion_contours_couplingMMed_{0}.pkl'.format(collider), "rb") as poly_file:
         loaded_polygons = pickle.load(poly_file)
 
         for signature in ['dijet','monojet','dilepton'] :

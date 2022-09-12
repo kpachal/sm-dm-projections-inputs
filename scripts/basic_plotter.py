@@ -7,7 +7,7 @@ import numpy as np
 
 from shapely.geometry import Polygon as shapely_pol
 from shapely.geometry import MultiPoint
-from shapely.ops import unary_union
+from shapely.ops import unary_union, polygonize
 from shapely import validation
 from matplotlib.path import Path
 from matplotlib.patches import Polygon
@@ -88,7 +88,13 @@ def get_contours(xvals, yvals, zvals) :
           # Check validity, fail if not valid
           if not new_shape.is_valid :
             print("Invalid polygon from extracted contour! Buffering....")
-            print(sub_segment)
+            print(validation.explain_validity(new_shape))
+            
+            squished = unary_union(new_shape)
+            for pg in polygonize(squished):
+              print(pg, pg.is_valid)
+
+            
             bval=0.01
             while (not new_shape.is_valid) and bval < 0.1 :
               new_shape = new_shape.buffer(bval) # smoothing out invalidities?
@@ -216,10 +222,10 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
   fig.colorbar(cp)
 
   if not vsCoupling :
-    print("Making plot",plot_path+'/massmass_{0}.pdf'.format(this_tag))
+    #print("Making plot",plot_path+'/massmass_{0}.pdf'.format(this_tag))
     plt.savefig(plot_path+'/massmass_{0}.pdf'.format(this_tag),bbox_inches='tight')
   else :
-    print("Making plot",plot_path+'/couplingmass_{0}.pdf'.format(this_tag))
+    #print("Making plot",plot_path+'/couplingmass_{0}.pdf'.format(this_tag))
     plt.savefig(plot_path+'/couplingmass_{0}.pdf'.format(this_tag),bbox_inches='tight')  
 
   plt.close(fig)
@@ -310,6 +316,8 @@ def coreDrawFunction(axes,contour_groups,legend_lines,addText = "",is_scaling=Fa
           else :
             usefacecolor = fill_colours[icol]
           # Drawing here
+          if len(list(contour.exterior.coords)) < 3 :
+            continue
           patch = Polygon(list(contour.exterior.coords), facecolor=usefacecolor, edgecolor=uselinecolor, zorder=2, label=uselabel,linewidth=line_width,linestyle=linestyle) 
           axes.add_patch(patch)
           if gradient : im.set_clip_path(patch)
