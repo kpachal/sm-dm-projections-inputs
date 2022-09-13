@@ -78,10 +78,17 @@ def make_plots(collider, model, contours, legend_lines, fix_couplings, extra_tag
     # And draw. First, version without DD experiment lines
     # Then draw the plots with DD lines on
     if 'vector' in model :
+        # If doing fcc-hh, remove MIGD line which is too high up to be seen.
         formatted_lines = get_dd_lines(spin_independent)
+        ddcurves = []
+        ddnames = []
+        for name, line in zip(formatted_lines[0],formatted_lines[1]) :
+            if not ('fcc' in collider and 'MIGD' in name) :
+                ddcurves.append(line)
+                ddnames.append(name)
         use_ylabel = "$\sigma_{SI}$ ($\chi$-nucleon) [cm$^2$]"
         drawDDPlot(contours,legend_lines, this_tag = tag_line, plot_path = usepath, addText = label_line, ylabel=use_ylabel, is_scaling=treat_as_scaling, transluscent=treat_as_scaling, xhigh=xhigh, ylow=ylow, yhigh=yhigh)
-        drawDDPlot(contours,legend_lines, this_tag = tag_line+"_withDD", plot_path = usepath, addText = label_line, ylabel=use_ylabel, is_scaling=treat_as_scaling, transluscent=treat_as_scaling, xhigh=xhigh, ylow=ylow, yhigh=yhigh, dd_curves = formatted_lines[1], dd_legendlines = formatted_lines[0])
+        drawDDPlot(contours,legend_lines, this_tag = tag_line+"_withDD", plot_path = usepath, addText = label_line, ylabel=use_ylabel, is_scaling=treat_as_scaling, transluscent=treat_as_scaling, xhigh=xhigh, ylow=ylow, yhigh=yhigh, dd_curves = ddcurves, dd_legendlines = ddnames)
     else :
         use_ylabel = "$\sigma_{SD}$ ($\chi$-nucleon) [cm$^2$]"
         drawDDPlot(contours,legend_lines, this_tag = tag_line, plot_path = usepath, addText = label_line, ylabel=use_ylabel, is_scaling=treat_as_scaling, transluscent=treat_as_scaling, xhigh=xhigh, ylow=ylow, yhigh=yhigh)

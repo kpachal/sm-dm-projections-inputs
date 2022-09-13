@@ -232,7 +232,7 @@ def drawContourPlotRough(grid_list, addPoints = False, this_tag = "default", plo
 
   return contour_list
 
-def coreDrawFunction(axes,contour_groups,legend_lines,addText = "",is_scaling=False, transluscent=False,xlow=None,xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [],gradient_fill=[],dashed_lines=[], dashed_legends=[],text_spot = 0,logx=False,logy=False) :
+def coreDrawFunction(axes,contour_groups,legend_lines,addText = "",is_scaling=False, transluscent=False,xlow=None,xhigh=None, ylow=None,yhigh=None, use_colourscheme=False, dash_contour = [],gradient_fill=[],dashed_lines=[], dashed_legends=[],text_spot = 0,logx=False,logy=False,dd_curves = None, dd_legendlines = None) :
 
     # Check input
     if not dash_contour : 
@@ -328,6 +328,11 @@ def coreDrawFunction(axes,contour_groups,legend_lines,addText = "",is_scaling=Fa
         for j,line in enumerate(newline) :
           patch = Polygon(list(line.exterior.coords),facecolor='none',edgecolor=colours_dashed[i],label=(label if j==0 else "_"),zorder=2,linewidth=2,linestyle='dashed')
           axes.add_patch(patch)
+
+    if dd_curves :
+      dd_colours = ['crimson','darkorange','gold','deeppink']
+      for i,(newline,label) in enumerate(zip(dd_curves,dd_legendlines)) :
+        plt.plot(newline[0],newline[1], color=dd_colours[i], label=label.replace(" ","\n"))      
 
     return
 
@@ -450,7 +455,7 @@ def drawDDPlot(contour_groups, legend_lines, this_tag = "default", plot_path = "
     ax.set_ylabel(ylabel, fontsize=16)
 
     text_spot = [0.84, 0.83]
-    coreDrawFunction(ax,contour_groups,legend_lines,addText,is_scaling, transluscent,xlow,xhigh, ylow,yhigh, use_colourscheme=False, dash_contour=[],gradient_fill=[],dashed_lines=dashed_lines,dashed_legends=dashed_legends,text_spot=text_spot,logx=True,logy=True)
+    coreDrawFunction(ax,contour_groups,legend_lines,addText,is_scaling, transluscent,xlow,xhigh, ylow,yhigh, use_colourscheme=False, dash_contour=[],gradient_fill=[],dashed_lines=dashed_lines,dashed_legends=dashed_legends,text_spot=text_spot,logx=True,logy=True,dd_curves = dd_curves, dd_legendlines = dd_legendlines)
 
     leg_y = text_spot[1]-0.05*(addText.count('\n')-2)
     leg = ax.legend(fontsize=14,bbox_to_anchor=(1.02,leg_y),loc="upper left")
